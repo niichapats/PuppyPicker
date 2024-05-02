@@ -18,11 +18,12 @@ class PuppyPickerController:
         self.model = PuppyPickerModel()
         self.view = PuppyPickerView(self)
 
+    def next_button_handler(self, page):
+        if page == 1:
+            self.view.find_breeds_page2(self.model.descriptive_lifespan())
+
     def show_info_handler(self):
         print(self.view.user_preference('show_breed'))
-
-    # def histogram(self):
-    #     self.df = load_data('path_to_breeds.csv')
 
     def run(self):
         """

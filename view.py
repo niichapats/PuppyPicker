@@ -22,13 +22,13 @@ class PuppyPickerView(tk.Tk):
         self.controller = controller
         self.title('Puppy Picker')
         # self.geometry('1100x700')
-        self.minsize(width=1050, height=700)
+        self.minsize(width=1050, height=750)
         self.breed_name = ['Golden retriever', 'Pug', 'Puddle', 'Pom']
         self.df = GraphManage.load_data('breeds.csv')
         self.page_find_breeds = 0
-        self.story_hist = tk.StringVar()
+        self.selected_story_hist = tk.StringVar()
         self.default_story_combo = 'Select Histogram'
-        self.story_hist.set(self.default_story_combo)
+        self.selected_story_hist.set(self.default_story_combo)
         self.selected_breed = tk.StringVar()
         self.init_component()
 
@@ -45,7 +45,7 @@ class PuppyPickerView(tk.Tk):
         style.configure('TFrame', background=light_brown_bg)
 
         style.configure('TLabel', background=light_brown_bg, foreground=light_brown_text, font=('Times New Roman', 20))
-        style.configure('Small.TLabel', background=light_brown_bg, foreground=light_brown_text, font=('Times New Roman', 14))
+        style.configure('Small.TLabel', background='white', foreground=light_brown_text, font=('Times New Roman', 17))
         style.configure('WhiteCenter.TLabel', anchor='center', background='white', foreground=light_brown_text,
                         font=('Times New Roman', 20),
                         padding=20)
@@ -83,7 +83,7 @@ class PuppyPickerView(tk.Tk):
         self.create_nav_button()
 
         self.right_frame = self.create_right_frame()
-        self.right_frame.grid(row=1, column=1, sticky='nsew')
+        self.right_frame.grid(row=1, column=1, sticky='nsew', pady=(10, 0), padx=(0, 20))
         # self.right_frame.grid_columnconfigure(0, weight=1, minsize=50)  # Control size of descriptive stats column
         # self.right_frame.grid_columnconfigure(1, weight=1, minsize=100)
 
@@ -108,8 +108,8 @@ class PuppyPickerView(tk.Tk):
         home_info = ttk.Label(right_frame,
                               text="Welcome !\n\nLet's explore breed traits through detailed graphs and \n\nfind your ideal match with personalized recommendations.",
                               style='WhiteCenter.TLabel')
-        home_info.grid(row=1, column=0, columnspan=2, sticky='nsew', padx=20, pady=(50, 0))
-
+        # home_info.grid(row=1, column=0, columnspan=2, sticky='nsew', padx=20, pady=(50, 0))
+        home_info.pack(fill="both", expand=True)
         return right_frame
 
     def create_bottom_frame(self):
@@ -117,8 +117,8 @@ class PuppyPickerView(tk.Tk):
         Bottom frame for exit button, next button, skip button
         """
         bottom_frame = ttk.Frame(self)
-        quit_button = ttk.Button(bottom_frame, text="Quit", style='Big.TButton', cursor="heart", command=self.destroy)
-        quit_button.pack(side=tk.LEFT, padx=35, pady=25)
+        exit_button = ttk.Button(bottom_frame, text="Exit", style='Big.TButton', cursor="heart", command=self.destroy)
+        exit_button.pack(side=tk.LEFT, padx=35, pady=25)
         # next_button = ttk.Button(bottom_frame, text="Next", style='Big.TButton', cursor="heart",
         #                          command=lambda: self.controller.next_button_handler(self.page_find_breeds))
         # next_button.pack(side=tk.RIGHT, padx=10, pady=10)
@@ -144,9 +144,9 @@ class PuppyPickerView(tk.Tk):
             widget.destroy()
 
     def clear_default_text(self, event=None):
-        current_value = self.story_hist.get()
+        current_value = self.selected_story_hist.get()
         if current_value == self.default_story_combo:
-            self.story_hist.set("")
+            self.selected_story_hist.set("")
 
     # Find Matching Breeds
     def find_breeds_page1(self):
@@ -167,50 +167,22 @@ class PuppyPickerView(tk.Tk):
                                    "   Before Finding your matching breeds,    \n\n"
                                    "   let’s see some interesting story    ",
                               style='WhiteCenter.TLabel')
-        menu_info.grid(row=1, column=0, sticky='nsew', padx=20, pady=(50, 0))
-
+        # menu_info.grid(row=1, column=0, sticky='nsew', padx=20, pady=(50, 0))
+        menu_info.pack(fill='both', expand=True)
         self.next_button = ttk.Button(self.bottom_frame, text="Next", style='Big.TButton', cursor="heart",
                                       command=lambda: self.controller.next_button_handler(self.page_find_breeds))
         self.next_button.pack(side=tk.RIGHT, padx=35, pady=25)
-
-    # def find_breeds_page2(self, data):
-    #     self.page_find_breeds = 2
-    #     self.clear_right_frame()
-    #
-    #     self.right_frame.grid_rowconfigure(0, minsize=50)
-    #
-    #     descriptive_stat = ttk.Label(self.right_frame,
-    #                                  text=f'Descriptive Statistic\n'
-    #                                       f'-----------------------\n'
-    #                                       f'Average Lifespan\n'
-    #                                       f'Min: {data[0]}\n'
-    #                                       f'Max: {data[1]}\n'
-    #                                       f'Mean: {data[2]}\n'
-    #                                       f'Mode: {data[3]}',
-    #                                  style='Small.TLabel')
-    #     descriptive_stat.grid(row=1, column=0, sticky='nw', padx=20)
-    #
-    #     fig_bar = GraphManage.story_bar(self.df)
-    #     canvas = FigureCanvasTkAgg(fig_bar, master=self.right_frame)
-    #     canvas_widget_bar = canvas.get_tk_widget()
-    #     canvas_widget_bar.grid(row=1, column=1)
-    #     canvas.draw()
-    #
-    #     story_hist_list = ['max_lifespan', 'max_height_male', 'max_height_female', 'max_weight_male', 'max_weight_female']
-    #     story_combobox = ttk.Combobox(self.right_frame, textvariable=self.story_hist, values=story_hist_list, state="readonly")
-    #     story_combobox.grid(row=0, column=3, padx=50, pady=(20, 0))
-    #     story_combobox.bind('<<ComboboxSelected>>', self.clear_default_text)
-    #     story_combobox.bind('<<ComboboxSelected>>',
-    #                         GraphManage.create_histogram(self.df, self.right_frame, self.story_hist.get(), 100, 100, 1, 3))
 
     def find_breeds_page2(self, data):
         self.page_find_breeds = 2
         self.clear_right_frame()
 
-        self.right_frame.grid_rowconfigure(0, minsize=50)
-        # self.right_frame.grid_rowconfigure(1, minsize=300)
+        # Top sub frame for label 1 and graph 1
+        self.top_sub_frame = tk.Frame(self.right_frame, background='white')
+        self.top_sub_frame.pack(side="top", fill="x", expand=False)
 
-        descriptive_stat = ttk.Label(self.right_frame,
+        # Label 1: descriptive statistic
+        descriptive_stat = ttk.Label(self.top_sub_frame,
                                      text=f'Descriptive Statistic\n'
                                           f'-----------------------\n'
                                           f'Average Lifespan\n'
@@ -219,53 +191,85 @@ class PuppyPickerView(tk.Tk):
                                           f'Mean: {data[2]}\n'
                                           f'Mode: {data[3]}',
                                      style='Small.TLabel')
-        descriptive_stat.grid(row=1, column=0, sticky='nw', padx=20, pady=10)
+        descriptive_stat.pack(side="left", fill="both", expand=True, padx=10)
 
-        # Bar graph represent size and lifespan
+        # Graph 1: Bar graph represent size and lifespan
         fig_bar = GraphManage.story_bar(self.df)
-        canvas = FigureCanvasTkAgg(fig_bar, master=self.right_frame)
+        canvas = FigureCanvasTkAgg(fig_bar, master=self.top_sub_frame)
         canvas_widget_bar = canvas.get_tk_widget()
-        canvas_widget_bar.grid(row=1, column=1, padx=10, pady=10)
+        canvas_widget_bar.pack(side="left", fill="both", expand=True)
         canvas.draw()
 
-        # Graph frame for histogram
-        self.graph_frame = ttk.Frame(self.right_frame)
-        self.graph_frame.grid(row=1, column=3, padx=(10, 0), sticky='new')
+        # Top right sub frame for combo box and graph 2
+        self.top_right_sub_frame = tk.Frame(self.top_sub_frame, background='white')
+        self.top_right_sub_frame.pack(side="left", fill="both", expand=True)
 
-        # Combobox for selecting histogram
+        # Combo box for selecting histogram
         story_hist_list = ['max_life_expectancy', 'max_height_male', 'max_height_female', 'max_weight_male', 'max_weight_female']
-        story_combobox = ttk.Combobox(self.right_frame, textvariable=self.story_hist, values=story_hist_list, state="readonly")
-        story_combobox.grid(row=0, column=3, padx=60)
+        story_combobox = ttk.Combobox(self.top_right_sub_frame, textvariable=self.selected_story_hist,
+                                      values=story_hist_list, state="readonly", style='Custom.TCombobox')
+        story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 70))
         story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
+
+        # Graph 2: default histogram
+        self.story_hist = GraphManage.create_histogram(self.df, 'max_life_expectancy')
+        canvas = FigureCanvasTkAgg(self.story_hist, master=self.top_right_sub_frame)
+        canvas.draw()
+        self.canvas_widget = canvas.get_tk_widget()
+        self.canvas_widget.config(width=240, height=210)
+        self.canvas_widget.pack(side="top", fill="both", expand=True, padx=(20, 70))
+
+        # Middle sub frame for Graph 3 and Graph 4
+        self.middle_sub_frame = tk.Frame(self.right_frame)
+        self.middle_sub_frame.pack(side="top", fill="x", expand=True)
+
+        # Graph 3: scatter plot
+        story_scatter = GraphManage.story_scatter(self.df)
+        canvas = FigureCanvasTkAgg(story_scatter, master=self.middle_sub_frame)
+        canvas_widget_heatmap = canvas.get_tk_widget()
+        canvas_widget_heatmap.pack(side="left", fill="both", expand=True)
+        canvas.draw()
+
+        # Graph 4: correlation heat map
+        story_heatmap = GraphManage.story_heatmap(self.df)
+        canvas = FigureCanvasTkAgg(story_heatmap, master=self.middle_sub_frame)
+        canvas_widget_heatmap = canvas.get_tk_widget()
+        canvas_widget_heatmap.pack(side="left", fill="both", expand=True)
+        canvas.draw()
+
+        # Bottom sub frame for label 2
+        bottom_sub_frame = tk.Frame(self.right_frame)
+        bottom_sub_frame.pack(side="top", fill="x", expand=False)
+
+        # Label 2: summary of the storytelling
+        summary = ttk.Label(bottom_sub_frame,
+                            text='Our data highlights a trend: larger dogs often have shorter lifespans.\n'
+                                 'Please consider this when selecting your new puppy.',
+                            style='Small.TLabel')
+        summary.pack(side="top", fill="both", expand=True)
 
     def story_combobox_handler(self, event):
         """ Handle combobox selection. """
-        selected_var = self.story_hist.get()
+        selected_var = self.selected_story_hist.get()
         if selected_var != self.default_story_combo:
             self.update_hist(selected_var)
 
     def update_hist(self, selected_var):
-        # Clear previous widgets in the graph frame
-        for widget in self.graph_frame.winfo_children():
-            widget.destroy()
 
-        # Generate the figure using the selected variable
-        fig = GraphManage.create_histogram(self.df, selected_var)
-
-        # Create the canvas and add it to the graph frame
-        canvas = FigureCanvasTkAgg(fig, master=self.graph_frame)
+        self.canvas_widget.destroy()
+        self.story_hist = GraphManage.create_histogram(self.df, selected_var)
+        canvas = FigureCanvasTkAgg(self.story_hist, master=self.top_right_sub_frame)
         canvas.draw()
-        canvas_widget = canvas.get_tk_widget()
-        # Explicitly set the size of the canvas widget
-        canvas_widget.config(width=240, height=210)
-        canvas_widget.pack(fill=tk.BOTH, expand=True)  # Adjust packing options if necessary
+        self.canvas_widget = canvas.get_tk_widget()
+        self.canvas_widget.config(width=240, height=210)
+        self.canvas_widget.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
 
     # Statistical Information
     def statistical_page1(self):
         # Clear some elements
         self.menu_label.destroy()
         try:
-            self.next_button.destroy()  # Ensuring next_button exists before trying to destroy it
+            self.next_button.destroy()
         except AttributeError:
             pass
         self.clear_right_frame()
@@ -347,6 +351,53 @@ class PuppyPickerView(tk.Tk):
         canvas_widget.config(width=500, height=400)
         canvas_widget.grid(row=4, column=0)
         canvas.draw()
+
+    def test_page2_position(self):
+        self.page_find_breeds = 2
+        self.clear_right_frame()
+        # Create a top frame for the first row of widgets
+        top_frame = tk.Frame(self.right_frame)
+        top_frame.pack(side="top", fill="x", expand=False)
+
+        # Label 1
+        label1 = tk.Label(top_frame, text="Label 1")
+        label1.pack(side="left", fill="both", expand=True)
+
+        # Graph 1
+        graph1 = tk.Label(top_frame, text="Graph 1", bg="grey")
+        graph1.pack(side="left", fill="both", expand=True)
+
+        # Combo Box and Graph 2 are in the top right frame
+        top_right_frame = tk.Frame(top_frame)
+        top_right_frame.pack(side="left", fill="both", expand=True)
+
+        # Combo Box
+        combo_box = tk.Label(top_right_frame, text="ComboBox", bg="lightgrey")
+        combo_box.pack(side="top", fill="x", expand=False)
+
+        # Graph 2
+        graph2 = tk.Label(top_right_frame, text="Graph 2", bg="grey")
+        graph2.pack(side="top", fill="both", expand=True)
+
+        # Middle frame for Graph 3 and Graph 4
+        middle_frame = tk.Frame(self.right_frame)
+        middle_frame.pack(side="top", fill="x", expand=True)
+
+        # Graph 3
+        graph3 = tk.Label(middle_frame, text="Graph 3", bg="grey")
+        graph3.pack(side="left", fill="both", expand=True)
+
+        # Graph 4
+        graph4 = tk.Label(middle_frame, text="Graph 4", bg="grey")
+        graph4.pack(side="left", fill="both", expand=True)
+
+        # Bottom frame for Label 2
+        bottom_frame = tk.Frame(self.right_frame)
+        bottom_frame.pack(side="top", fill="x", expand=False)
+
+        # Label 2
+        label2 = tk.Label(bottom_frame, text="Label 2")
+        label2.pack(side="top", fill="x", expand=False)
 
     def run(self):
         """

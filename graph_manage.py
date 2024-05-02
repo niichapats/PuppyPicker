@@ -1,5 +1,6 @@
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 
@@ -31,23 +32,53 @@ class GraphManage:
         Creates a histogram figure of the specified variable from the dataframe.
         """
         if selected_var in df.columns:
-            fig = Figure(figsize=(3, 3))
+            fig = Figure(figsize=(4, 3))
             ax = fig.add_subplot(111)
-            df.hist(column=selected_var, ax=ax)
+            df.hist(column=selected_var, ax=ax, color='#CDC673')
             ax.set_title(f'{selected_var} Histogram', fontsize=6)
             ax.set_xlabel(selected_var, fontsize=6)
             ax.set_ylabel('Frequency', fontsize=6)
             ax.tick_params(axis='both', which='major', labelsize=6)
 
-            fig.tight_layout(pad=1.0)
+            fig.tight_layout(pad=2.5)
 
             return fig
 
-    def story_scatter(self):
-        pass
+    @staticmethod
+    def story_scatter(df):
+        if 'average_lifespan' in df.columns and 'average_size' in df.columns:
+            fig = Figure(figsize=(2.5, 2))
+            ax = fig.subplots()
 
-    def story_corr_heat(self):
-        pass
+            sns.scatterplot(data=df, x='average_size', y='average_lifespan', ax=ax, color='#9370DB')
+
+            ax.set_title('Size vs. Lifespan Scatter plot', fontsize=6)
+            ax.set_xlabel('Average Size (Height and Weight Combined)', fontsize=6)
+            ax.set_ylabel('Average Lifespan (Years)', fontsize=6)
+            ax.tick_params(axis='both', which='major', labelsize=6)
+            ax.grid(True)
+            fig.tight_layout(pad=0.5)
+
+            return fig
+
+    @staticmethod
+    def story_heatmap(df):
+        if 'average_lifespan' in df.columns and 'average_size' in df.columns:
+            fig = Figure(figsize=(2.5, 2))
+            ax = fig.subplots()
+
+            selected_columns = df[['average_lifespan', 'average_size']]
+            correlation_matrix = selected_columns.corr()
+
+            sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f",
+                        linewidths=.5, cbar_kws={"shrink": .8}, ax=ax)
+
+            ax.set_title('Correlation Heatmap', fontsize=6)
+            ax.tick_params(axis='both', which='major', labelsize=6)
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+            fig.tight_layout(pad=0.5)
+
+        return fig
 
     @staticmethod
     def story_bar(df):
@@ -67,7 +98,6 @@ class GraphManage:
             ax.set_xlabel('Size Category', fontsize=6)
             ax.set_ylabel('Average Lifespan (Years)', fontsize=6)
             ax.tick_params(axis='both', which='major', labelsize=6)
-
             fig.tight_layout(pad=0.5)
 
             return fig

@@ -78,7 +78,7 @@ class GraphManage:
             ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
             fig.tight_layout(pad=0.5)
 
-        return fig
+            return fig
 
     @staticmethod
     def story_bar(df):
@@ -101,3 +101,38 @@ class GraphManage:
             fig.tight_layout(pad=0.5)
 
             return fig
+
+    @staticmethod
+    def create_bar(df, title, x_axis, y_axis, x_label, y_label, color):
+        fig = Figure(figsize=(2, 2))
+        ax = fig.add_subplot(111)
+
+        ax.barplot(x=x_axis, y=y_axis, data=df, ax=ax, color=color)
+
+        ax.set_title(title, fontsize=6)
+        ax.set_xlabel(x_label, fontsize=6)
+        ax.set_ylabel(y_label, fontsize=6)
+        ax.tick_params(axis='both', which='major', labelsize=6)
+        fig.tight_layout(pad=0.5)
+
+        return fig
+
+    @staticmethod
+    def score_bar(x_axis, y_axis):
+        fig = Figure(figsize=(4, 4.5))
+        ax = fig.add_subplot(111)
+
+        ax.bar(x_axis, y_axis, color='#E9967A')
+
+        ax.set_title('Scores of the top 5 dogs that\n'
+                     'best match your preferences', fontsize=11)
+        ax.set_xlabel('Breeds', fontsize=9)
+        ax.set_ylabel('Score', fontsize=9)
+        ax.tick_params(axis='both', which='major', labelsize=8)
+
+        ax.set_xticks(range(len(x_axis)))
+        ax.set_xticklabels(x_axis, rotation=45)
+
+        fig.tight_layout(pad=0.75)
+
+        return fig

@@ -9,7 +9,6 @@ class PuppyPickerModel:
     def find_matching_breeds(self, preference: list):
         columns = ['adaptability', 'all_around_friendliness', 'health_grooming',
                    'trainability', 'exercise_needs', 'average_lifespan']
-        print(preference)
         if preference[6] == 'all':
             df_temp = self.df.copy()
         else:

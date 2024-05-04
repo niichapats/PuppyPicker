@@ -40,7 +40,8 @@ class PuppyPickerController:
                 top_name, top_score = self.model.find_matching_breeds(prefer_list)
                 self.view.find_breeds_page4(top_name, top_score)
         elif page == 4:
-            self.view.dog_info_page()
+            if self.view.selected_breed_combo.get() != 'Select':
+                self.view.dog_info_page()
 
     def show_info_handler(self):
         if self.view.selected_breed_combo.get() != 'Select':

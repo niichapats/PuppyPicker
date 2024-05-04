@@ -4,13 +4,6 @@ The program is about exploring dog breed traits through graphs and finding your 
 
 ### How to Run
 
-Follow these steps to get the project up and running on your local machine.
-
-#### Prerequisites
-
-- Git
-- Python 3
-
 #### Setup
 
 1. Clone the repository
@@ -19,8 +12,8 @@ Follow these steps to get the project up and running on your local machine.
 4. Install required packages in requirements.txt
 
 #### Run the program
-Run main.py
+To run the program, execute the following command in the terminal:   
+**python main.py**  
 
-**command**  
-python main.py  
-or python3 main.py
+Or if you are using a Unix-like system, you might prefer:  
+**python3 main.py**

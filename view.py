@@ -22,7 +22,6 @@ class PuppyPickerView(tk.Tk):
         self.controller = controller
         self.title('Puppy Picker')
         self.minsize(width=1050, height=750)
-        self.breed_name = ['Golden retriever', 'Pug', 'Puddle', 'Pom']
         self.df = GraphManage.load_data('breeds.csv')
 
         self.page_find_breeds = 0
@@ -31,9 +30,9 @@ class PuppyPickerView(tk.Tk):
 
         self.selected_story_hist.set(self.default_story_combo)
         self.selected_size = tk.StringVar()
-        self.user_prefer = {}
 
-        self.selected_breed = tk.StringVar()
+        self.selected_breed_combo = tk.StringVar()
+        # self.selected_breed_combo2 = tk.StringVar()
         self.init_component()
 
     def init_component(self):
@@ -270,24 +269,25 @@ class PuppyPickerView(tk.Tk):
         self.canvas_widget.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
 
     # Page 3
-    def run_find_breeds_page3(self):
-        self.clear_right_frame()
-        self.page_find_breeds = 3
-        self.progress_bar = ttk.Progressbar(self.right_frame, length=400, mode="indeterminate")
-        self.progress_bar.pack(side="bottom")
-        self.thread = Thread(target=self.find_breeds_page3)
-        self.thread.start()
-        self.progress_bar.start(10)
-        self.after(10, self.check_ui)
-
-    def check_ui(self):
-        if self.thread.is_alive():
-            self.after(10, self.check_ui)
-        else:
-            self.progress_bar.stop()
+    # def run_find_breeds_page3(self):
+    #     self.clear_right_frame()
+    #     self.page_find_breeds = 3
+    #     self.progress_bar = ttk.Progressbar(self.right_frame, length=400, mode="indeterminate")
+    #     self.progress_bar.pack(side="bottom")
+    #     self.thread = Thread(target=self.find_breeds_page3)
+    #     self.thread.start()
+    #     self.progress_bar.start(10)
+    #     self.after(10, self.check_ui)
+    #
+    # def check_ui(self):
+    #     if self.thread.is_alive():
+    #         self.after(10, self.check_ui)
+    #     else:
+    #         self.progress_bar.stop()
 
     def find_breeds_page3(self):
-        self.clear_user_prefer()
+        self.clear_right_frame()
+        self.page_find_breeds = 3
         top_label = ttk.Label(self.right_frame, style='TLabel',
                               text="Each characteristic is rated from 0 to 3, "
                                    "where 1 indicates low importance,\n\n"
@@ -300,8 +300,6 @@ class PuppyPickerView(tk.Tk):
         right_frame = ttk.Frame(self.right_frame, style='TFrame')
         left_frame.pack(side="left", fill="y", expand=True, padx=10, pady=10)
         right_frame.pack(side="right", fill="y", expand=True, padx=10, pady=10)
-
-        right_labels = ['Exercise needs', 'Long lifespan', 'Size']
 
         # Left sub frame
         label1_widget = ttk.Label(left_frame, text='Adaptability\n\n\n'
@@ -342,6 +340,41 @@ class PuppyPickerView(tk.Tk):
         combo_size.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
         combo_size.set('Select')
 
+    # Page 4
+    def find_breeds_page4(self, name_list, score_list):
+        self.clear_right_frame()
+        self.page_find_breeds = 4
+
+        # Create frames for left and right columns
+        left_frame = ttk.Frame(self.right_frame, style='TFrame')
+        right_frame = ttk.Frame(self.right_frame, style='TFrame')
+        left_frame.pack(side="left", fill="y", expand=True, padx=10, pady=10)
+        right_frame.pack(side="right", fill="y", expand=True, padx=10, pady=10)
+
+        score_graph = GraphManage.score_bar(name_list, score_list)
+        canvas = FigureCanvasTkAgg(score_graph, master=left_frame)
+        canvas_widget_score = canvas.get_tk_widget()
+        canvas_widget_score.pack(side="left", expand=True)
+        canvas.draw()
+
+        # best_match = ttk.Label(left_frame, text=f'Your Best Match\n\n'
+        #                                         f': {name_list[0]}\n\n\n\n\n\n\n'
+        #                                         f'Click "Next" to see\n\n'
+        #                                         f'more information\n\n'
+        #                                         f'about your best match !',
+        #                        style='TLabel')
+
+        best_match = ttk.Label(right_frame, text=f'Your Best Match\n\n'
+                                                 f': {name_list[0]}\n\n\n\n\n\n\n'
+                                                 f'Select breed\n\n'
+                                                 f'to see more information')
+        best_match.pack(padx=10, expand=True)
+
+        self.combobox_breed1 = ttk.Combobox(right_frame, textvariable=self.selected_breed_combo,
+                                            values=name_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed1.pack(anchor='n', padx=10, expand=True)
+        self.combobox_breed1.set('Select')
+
     def get_user_prefer(self):
         prefer_list = [self.entry_adapt.get(), self.entry_friendly.get(), self.entry_health.get(),
                        self.entry_train.get(), self.entry_exercise.get(), self.entry_life.get(),
@@ -349,6 +382,39 @@ class PuppyPickerView(tk.Tk):
         return prefer_list
 
     # Statistical Information
+    def dog_info_page(self):
+        self.clear_right_frame()
+        try:
+            self.next_button.destroy()
+        except AttributeError:
+            pass
+        self.clear_right_frame()
+
+        breed = self.selected_breed_combo.get()
+        breed_group = self.df[self.df['breed'] == breed]['breed_group'].iloc[0]
+        breed_size = self.df[self.df['breed'] == breed]['size_category'].iloc[0]
+        min_lifespan = self.df[self.df['breed'] == breed]['min_life_expectancy'].iloc[0]
+        max_lifespan = self.df[self.df['breed'] == breed]['max_life_expectancy'].iloc[0]
+
+        left_frame = ttk.Frame(self.right_frame, style='TFrame')
+        right_frame = ttk.Frame(self.right_frame, style='TFrame')
+        left_frame.pack(side='left', fill='y', expand=True, padx=10, pady=10)
+        right_frame.pack(side='right', fill='y', expand=True, padx=10, pady=10)
+
+        breed_label = ttk.Label(left_frame, text=breed, style='WhiteCenter.TLabel')
+        breed_label.pack(side='top', expand=True)
+
+        info_label = ttk.Label(right_frame, text=f'Breed Group: {breed_group}         Size: {breed_size}\n\n'
+                                                 f'Minimum Lifespan: {min_lifespan}      Max Lifespan: {max_lifespan}',
+                               style='TLabel')
+        info_label.pack(expand=True, pady=10)
+
+        char_bar = GraphManage.create_char_bar(self.df, breed)
+        canvas = FigureCanvasTkAgg(char_bar, master=right_frame)
+        canvas_widget_score = canvas.get_tk_widget()
+        canvas_widget_score.pack(side='top', anchor='n', expand=True)
+        canvas.draw()
+
     def statistical_page1(self):
         # Clear some elements
         self.menu_label.destroy()
@@ -358,46 +424,51 @@ class PuppyPickerView(tk.Tk):
             pass
         self.clear_right_frame()
 
-        self.menu_label = ttk.Label(self.top_frame, text='Statistical Information', style='TLabel', padding=(55, 0))
+        sorted_df = self.df.sort_values(by='breed')
+        sorted_breed_list = sorted_df['breed'].tolist()
+
+        self.menu_label = ttk.Label(self.top_frame, text='Statistical Information',
+                                    style='TLabel', padding=(55, 0))
         self.menu_label.pack()
 
         # Configure grid for expansion and alignment
         self.right_frame.grid_columnconfigure(0, weight=1)
-        self.right_frame.grid_rowconfigure(0, weight=1)
-        self.right_frame.grid_rowconfigure(1, weight=1)
-        self.right_frame.grid_rowconfigure(2, weight=1)
-        self.right_frame.grid_rowconfigure(3, weight=1)
-        self.right_frame.grid_rowconfigure(4, weight=1)
-        self.right_frame.grid_rowconfigure(5, weight=1)
+        self.right_frame.grid_rowconfigure(0, minsize=50)
+        self.right_frame.grid_rowconfigure(1, minsize=50)
+        self.right_frame.grid_rowconfigure(2, minsize=50)
+        self.right_frame.grid_rowconfigure(3, minsize=100)
+        self.right_frame.grid_rowconfigure(4, minsize=70)
 
-        # Label and entry for entering breed
-        self.label_enter_breed = ttk.Label(self.right_frame, text='Enter dog breed', style='TLabel')
-        self.label_enter_breed.grid(row=0, column=0, padx=90, pady=(30, 0), sticky='ew')
-        self.entry_breed = ttk.Entry(self.right_frame, style='TEntry')
-        self.entry_breed.grid(row=1, column=0, padx=90, pady=(10, 0), sticky='ew')
-        self.entry_breed.focus()
+        # # Label and entry for entering breed
+        # self.label_enter_breed = ttk.Label(self.right_frame, text='Enter dog breed', style='TLabel')
+        # self.label_enter_breed.grid(row=0, column=0, padx=90, pady=(30, 0), sticky='ew')
+        # self.entry_breed = ttk.Entry(self.right_frame, style='TEntry')
+        # self.entry_breed.grid(row=1, column=0, padx=90, pady=(10, 0), sticky='ew')
+        # self.entry_breed.focus()
 
         # Label and combobox for choosing a breed
-        self.label_choose_breed = ttk.Label(self.right_frame, text='Or choose dog breed', style='TLabel')
-        self.label_choose_breed.grid(row=2, column=0, padx=90, pady=(10, 0), sticky='ew')
-        self.combobox_breed = ttk.Combobox(self.right_frame, width=30, textvariable=self.selected_breed,
-                                           values=self.breed_name, state='readonly', style='Custom.TCombobox')
-        self.combobox_breed.grid(row=3, column=0, padx=90, pady=(5, 10), sticky='ew')
+        self.label_choose_breed = ttk.Label(self.right_frame, text='Choose dog breed', style='TLabel')
+        self.label_choose_breed.grid(row=0, column=0, padx=170, pady=(70, 0), sticky='ew')
+        self.combobox_breed2 = ttk.Combobox(self.right_frame, width=30, textvariable=self.selected_breed_combo,
+                                            values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed2.grid(row=1, column=0, padx=170, pady=(20, 0), sticky='ew')
+        self.combobox_breed2.set('Select')
 
         # Button to show information
         self.show_info_button = ttk.Button(self.right_frame, text='Show Information', style='TButton',
                                            command=self.controller.show_info_handler)
-        self.show_info_button.grid(row=4, column=0, padx=90, pady=(0, 10), sticky='ew')
+        self.show_info_button.grid(row=2, column=0, padx=170, pady=20, sticky='ew')
 
         # Label for data exploration section
         self.explore_label = ttk.Label(self.right_frame,
-                                       text="[Data exploration] Select attributes and plot your own graph",
-                                       style='TLabel', padding=(80, 10))
-        self.explore_label.grid(row=5, column=0, padx=10, pady=(0, 0), sticky='ew')
+                                       text='Data exploration\n\n'
+                                            'Select attributes and plot your own graph',
+                                       style='TLabel')
+        self.explore_label.grid(row=3, column=0, padx=170, pady=0, sticky='ew')
 
         # Button for exploring data
         self.explore_button = ttk.Button(self.right_frame, text='Explore', style='TButton')
-        self.explore_button.grid(row=6, column=0, padx=90, pady=(10, 0), sticky='ew')
+        self.explore_button.grid(row=4, column=0, padx=170, pady=0, sticky='new')
 
     def comparison_page1(self):
         self.menu_label.destroy()
@@ -406,37 +477,22 @@ class PuppyPickerView(tk.Tk):
         except AttributeError:
             pass
         self.clear_right_frame()
-        self.menu_label = ttk.Label(self.top_frame, text="Characteristics Comparison", style='TLabel', padding=(45, 0))
+        self.menu_label = ttk.Label(self.top_frame, text="Characteristics Comparison",
+                                    style='TLabel', padding=(45, 0))
         self.menu_label.pack()
 
-    def user_preference(self, command):
-        if command == 'find':
-            pass
-        elif command == 'show_breed':
-            if self.entry_breed.get():
-                return self.entry_breed.get()
-            else:
-                return self.selected_breed.get()
-        elif command == 'select_1breed':
-            pass
-        elif command == 'select_2breed':
-            pass
-
-    def find_breeds_page4(self, name_list, score_list):
-        self.clear_right_frame()
-        score_graph = GraphManage.score_bar(name_list, score_list)
-        canvas = FigureCanvasTkAgg(score_graph, master=self.right_frame)
-        canvas_widget_score = canvas.get_tk_widget()
-        canvas_widget_score.pack(side="left", expand=True)
-        canvas.draw()
-
-        best_match = ttk.Label(self.right_frame, text=f'Your Best Match\n\n'
-                                                      f': {name_list[0]}\n\n\n\n\n\n\n'
-                                                      f'Click "Next" to see\n\n'
-                                                      f'more information\n\n'
-                                                      f'about your best match !',
-                               style='TLabel')
-        best_match.pack(side='right', padx=15, expand=True)
+    # def user_preference(self, command):
+    #     if command == 'find':
+    #         pass
+    #     elif command == 'show_breed':
+    #         if self.entry_breed.get():
+    #             return self.entry_breed.get()
+    #         else:
+    #             return self.selected_breed.get()
+    #     elif command == 'select_1breed':
+    #         pass
+    #     elif command == 'select_2breed':
+    #         pass
 
     def inform_error(self, inform_text):
         try:
@@ -448,9 +504,6 @@ class PuppyPickerView(tk.Tk):
                                 font=('Times New Roman', 20))
         self.inform.pack(side='left', anchor='e', expand=True)
         self.after(2000, self.inform.destroy)
-
-    def clear_user_prefer(self):
-        self.user_prefer = {}
 
     def run(self):
         """

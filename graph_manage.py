@@ -1,5 +1,6 @@
 import pandas as pd
 import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
@@ -103,17 +104,31 @@ class GraphManage:
             return fig
 
     @staticmethod
-    def create_bar(df, title, x_axis, y_axis, x_label, y_label, color):
-        fig = Figure(figsize=(2, 2))
+    def create_char_bar(df, breed):
+
+        selected_breeds = [breed]
+        characteristics = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
+
+        selected_data = df[df['breed'].isin(selected_breeds)][['breed'] + characteristics]
+
+        fig = Figure(figsize=(3.5, 3.5))
         ax = fig.add_subplot(111)
 
-        ax.barplot(x=x_axis, y=y_axis, data=df, ax=ax, color=color)
+        if not selected_data.empty:
+            data_for_plotting = selected_data[characteristics].iloc[0].values
+            index = np.arange(len(characteristics))
 
-        ax.set_title(title, fontsize=6)
-        ax.set_xlabel(x_label, fontsize=6)
-        ax.set_ylabel(y_label, fontsize=6)
-        ax.tick_params(axis='both', which='major', labelsize=6)
-        fig.tight_layout(pad=0.5)
+            ax.bar(index, data_for_plotting, color='#66CDAA')
+
+            ax.set_title('Characteristic score', fontsize=11)
+            ax.set_xlabel('Characteristics', fontsize=9)
+            ax.set_ylabel('Scores (0-5)', fontsize=9)
+            ax.set_xticks(index)
+            ax.set_xticklabels(characteristics, rotation=45, ha="right")
+            ax.tick_params(axis='both', which='major', labelsize=8)
+
+            # Adjust layout
+            fig.tight_layout(pad=0.5)
 
         return fig
 
@@ -136,3 +151,11 @@ class GraphManage:
         fig.tight_layout(pad=0.75)
 
         return fig
+
+    @staticmethod
+    def male_female_bar(column_name):
+        if column_name == 'Height':
+            pass
+        if column_name == 'Weight':
+            pass
+

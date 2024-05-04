@@ -31,21 +31,25 @@ class PuppyPickerController:
                 if item not in allowed_values:
                     correct_value = False
             if '' in prefer_list:
-                self.view.inform_error('Please complete all required fields')
+                self.view.report_error('Please complete all required fields')
             elif 'Select' in prefer_list:
-                self.view.inform_error('Please choose a size')
+                self.view.report_error('Please choose a size')
             elif not correct_value:
-                self.view.inform_error('Please enter only 0-3')
+                self.view.report_error('Please enter only 0-3')
             else:
                 top_name, top_score = self.model.find_matching_breeds(prefer_list)
                 self.view.find_breeds_page4(top_name, top_score)
         elif page == 4:
             if self.view.selected_breed_combo.get() != 'Select':
                 self.view.dog_info_page()
+            else:
+                self.view.report_error('Choose dog breed')
 
     def show_info_handler(self):
         if self.view.selected_breed_combo.get() != 'Select':
             self.view.dog_info_page()
+        else:
+            self.view.report_error('Choose dog breed')
 
     def run(self):
         """

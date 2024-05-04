@@ -134,13 +134,41 @@ class GraphManage:
 
     @staticmethod
     def score_bar(x_axis, y_axis):
-        fig = Figure(figsize=(4, 4.5))
+        fig = Figure(figsize=(3.5, 4))
         ax = fig.add_subplot(111)
 
         ax.bar(x_axis, y_axis, color='#E9967A')
 
         ax.set_title('Scores of the top 5 dogs that\n'
-                     'best match your preferences', fontsize=11)
+                     'best match your preferences', fontsize=10)
+        ax.set_xlabel('Breeds', fontsize=8)
+        ax.set_ylabel('Score', fontsize=8)
+        ax.tick_params(axis='both', which='major', labelsize=8)
+
+        ax.set_xticks(range(len(x_axis)))
+        ax.set_xticklabels(x_axis, rotation=45)
+
+        fig.tight_layout(pad=0.5)
+
+        return fig
+
+    @staticmethod
+    def gender_bar(gender, y_axis):
+        x_axis = ['Min height', 'Max Height', 'Min Weight', 'Max Weight']
+        fig = Figure(figsize=(3, 3))
+        ax = fig.add_subplot(111)
+
+        if gender == 'Male':
+            bar_plot = ax.bar(x_axis, y_axis)
+            colors = ['#AFA3D1', '#8E7FCD', '#89A5D4', '#596EAD']
+            for i, bar in enumerate(bar_plot.patches):
+                bar.set_color(colors[i % len(colors)])
+        elif gender == 'Female':
+            bar_plot = ax.bar(x_axis, y_axis)
+            colors = ['#D1A3D1', '#CD7FC1', '#D89C9C', '#CB7988']
+            for i, bar in enumerate(bar_plot.patches):
+                bar.set_color(colors[i % len(colors)])
+
         ax.set_xlabel('Breeds', fontsize=9)
         ax.set_ylabel('Score', fontsize=9)
         ax.tick_params(axis='both', which='major', labelsize=8)
@@ -148,14 +176,7 @@ class GraphManage:
         ax.set_xticks(range(len(x_axis)))
         ax.set_xticklabels(x_axis, rotation=45)
 
-        fig.tight_layout(pad=0.75)
+        fig.tight_layout(pad=0.5)
 
         return fig
-
-    @staticmethod
-    def male_female_bar(column_name):
-        if column_name == 'Height':
-            pass
-        if column_name == 'Weight':
-            pass
 

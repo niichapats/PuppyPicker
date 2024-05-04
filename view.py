@@ -32,7 +32,7 @@ class PuppyPickerView(tk.Tk):
         self.selected_size = tk.StringVar()
 
         self.selected_breed_combo = tk.StringVar()
-        # self.selected_breed_combo2 = tk.StringVar()
+        self.selected_gender_combo = tk.StringVar()
         self.init_component()
 
     def init_component(self):
@@ -51,6 +51,8 @@ class PuppyPickerView(tk.Tk):
                         font=('Times New Roman', 20))
         style.configure('Small.TLabel', background='white', foreground=light_brown_text,
                         font=('Times New Roman', 17))
+        style.configure('Medium.TLabel', background=light_brown_bg, foreground=light_brown_text,
+                        font=('Times New Roman', 18))
         style.configure('WhiteCenter.TLabel', anchor='center', background='white',
                         foreground=light_brown_text, font=('Times New Roman', 20),
                         padding=20)
@@ -216,9 +218,9 @@ class PuppyPickerView(tk.Tk):
         self.story_hist = GraphManage.create_histogram(self.df, 'max_life_expectancy')
         canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_right_frame)
         canvas.draw()
-        self.canvas_widget = canvas.get_tk_widget()
-        self.canvas_widget.config(width=240, height=210)
-        self.canvas_widget.pack(side="top", fill="both", expand=True, padx=(20, 70))
+        self.canvas_widget_story = canvas.get_tk_widget()
+        self.canvas_widget_story.config(width=240, height=210)
+        self.canvas_widget_story.pack(side="top", fill="both", expand=True, padx=(20, 70))
 
         # Middle sub frame for Graph 3 and Graph 4
         self.story_middle_frame = tk.Frame(self.right_frame)
@@ -260,13 +262,13 @@ class PuppyPickerView(tk.Tk):
         Update the histogram in the storytelling section
         by retrieving data from a combo box
         """
-        self.canvas_widget.destroy()
+        self.canvas_widget_story.destroy()
         self.story_hist = GraphManage.create_histogram(self.df, selected_var)
         canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_right_frame)
         canvas.draw()
-        self.canvas_widget = canvas.get_tk_widget()
-        self.canvas_widget.config(width=240, height=210)
-        self.canvas_widget.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
+        self.canvas_widget_story = canvas.get_tk_widget()
+        self.canvas_widget_story.config(width=240, height=210)
+        self.canvas_widget_story.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
 
     # Page 3
     # def run_find_breeds_page3(self):
@@ -357,13 +359,6 @@ class PuppyPickerView(tk.Tk):
         canvas_widget_score.pack(side="left", expand=True)
         canvas.draw()
 
-        # best_match = ttk.Label(left_frame, text=f'Your Best Match\n\n'
-        #                                         f': {name_list[0]}\n\n\n\n\n\n\n'
-        #                                         f'Click "Next" to see\n\n'
-        #                                         f'more information\n\n'
-        #                                         f'about your best match !',
-        #                        style='TLabel')
-
         best_match = ttk.Label(right_frame, text=f'Your Best Match\n\n'
                                                  f': {name_list[0]}\n\n\n\n\n\n\n'
                                                  f'Select breed\n\n'
@@ -396,17 +391,36 @@ class PuppyPickerView(tk.Tk):
         min_lifespan = self.df[self.df['breed'] == breed]['min_life_expectancy'].iloc[0]
         max_lifespan = self.df[self.df['breed'] == breed]['max_life_expectancy'].iloc[0]
 
-        left_frame = ttk.Frame(self.right_frame, style='TFrame')
+        self.info_left_frame = ttk.Frame(self.right_frame, style='TFrame')
         right_frame = ttk.Frame(self.right_frame, style='TFrame')
-        left_frame.pack(side='left', fill='y', expand=True, padx=10, pady=10)
+        self.info_left_frame.pack(side='left', fill='y', expand=True, padx=10, pady=10)
         right_frame.pack(side='right', fill='y', expand=True, padx=10, pady=10)
 
-        breed_label = ttk.Label(left_frame, text=breed, style='WhiteCenter.TLabel')
-        breed_label.pack(side='top', expand=True)
+        # Left sub frame
+        breed_label = ttk.Label(self.info_left_frame, text=f'[ {breed} ]', style='TLabel')
+        breed_label.pack(side='top', pady=(20, 0), expand=True)
 
+        gender_combo = ttk.Combobox(self.info_left_frame, textvariable=self.selected_gender_combo,
+                                    values=['Male', 'Female'], state='readonly', style='Custom.TCombobox')
+        gender_combo.pack(side='top', pady=10, expand=True)
+        gender_combo.bind('<<ComboboxSelected>>', self.gender_combobox_handler)
+
+        # Default gender graph (Male)
+        min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
+        max_height_m = self.df[self.df['breed'] == breed]['max_height_male'].iloc[0]
+        min_weight_m = self.df[self.df['breed'] == breed]['min_weight_male'].iloc[0]
+        max_weight_m = self.df[self.df['breed'] == breed]['max_weight_male'].iloc[0]
+        male_data = [min_height_m, max_height_m, min_weight_m, max_weight_m]
+        gender_bar = GraphManage.gender_bar('Male', male_data)
+        canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
+        self.canvas_widget_gender = canvas.get_tk_widget()
+        self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
+        canvas.draw()
+
+        # Right sub frame
         info_label = ttk.Label(right_frame, text=f'Breed Group: {breed_group}         Size: {breed_size}\n\n'
                                                  f'Minimum Lifespan: {min_lifespan}      Max Lifespan: {max_lifespan}',
-                               style='TLabel')
+                               style='Medium.TLabel')
         info_label.pack(expand=True, pady=10)
 
         char_bar = GraphManage.create_char_bar(self.df, breed)
@@ -414,6 +428,38 @@ class PuppyPickerView(tk.Tk):
         canvas_widget_score = canvas.get_tk_widget()
         canvas_widget_score.pack(side='top', anchor='n', expand=True)
         canvas.draw()
+
+    def gender_combobox_handler(self, event):
+        breed = self.selected_breed_combo.get()
+        self.canvas_widget_gender.destroy()
+
+        # Male
+        min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
+        max_height_m = self.df[self.df['breed'] == breed]['max_height_male'].iloc[0]
+        min_weight_m = self.df[self.df['breed'] == breed]['min_weight_male'].iloc[0]
+        max_weight_m = self.df[self.df['breed'] == breed]['max_weight_male'].iloc[0]
+        male_data = [min_height_m, max_height_m, min_weight_m, max_weight_m]
+
+        # Female
+        min_height_f = self.df[self.df['breed'] == breed]['min_height_female'].iloc[0]
+        max_height_f = self.df[self.df['breed'] == breed]['max_height_female'].iloc[0]
+        min_weight_f = self.df[self.df['breed'] == breed]['min_weight_female'].iloc[0]
+        max_weight_f = self.df[self.df['breed'] == breed]['max_weight_female'].iloc[0]
+        female_data = [min_height_f, max_height_f, min_weight_f, max_weight_f]
+
+        selected_gender = self.selected_gender_combo.get()
+        if selected_gender == 'Male':
+            gender_bar = GraphManage.gender_bar('Male', male_data)
+            canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
+            self.canvas_widget_gender = canvas.get_tk_widget()
+            self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
+            canvas.draw()
+        elif selected_gender == 'Female':
+            gender_bar = GraphManage.gender_bar('Female', female_data)
+            canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
+            self.canvas_widget_gender = canvas.get_tk_widget()
+            self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
+            canvas.draw()
 
     def statistical_page1(self):
         # Clear some elements

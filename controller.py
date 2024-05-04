@@ -38,13 +38,13 @@ class PuppyPickerController:
                 self.view.inform_error('Please enter only 0-3')
             else:
                 top_name, top_score = self.model.find_matching_breeds(prefer_list)
-                self.breed_match = top_name[0]
                 self.view.find_breeds_page4(top_name, top_score)
         elif page == 4:
             self.view.dog_info_page()
 
     def show_info_handler(self):
-        self.view.dog_info_page()
+        if self.view.selected_breed_combo.get() != 'Select':
+            self.view.dog_info_page()
 
     def run(self):
         """

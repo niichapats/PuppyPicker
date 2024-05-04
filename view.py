@@ -21,7 +21,7 @@ class PuppyPickerView(tk.Tk):
         super().__init__()
         self.controller = controller
         self.title('Puppy Picker')
-        self.minsize(width=1050, height=750)
+        self.minsize(width=1060, height=750)
         self.df = GraphManage.load_data('breeds.csv')
 
         self.page_find_breeds = 0
@@ -204,7 +204,7 @@ class PuppyPickerView(tk.Tk):
                            'max_weight_female']
         story_combobox = ttk.Combobox(self.story_top_right_frame, textvariable=self.selected_story_hist,
                                       values=story_hist_list, state="readonly", style='Custom.TCombobox')
-        story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(10, 0))
+        story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(5, 0))
         story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
 
         # Graph 2: default histogram
@@ -337,10 +337,10 @@ class PuppyPickerView(tk.Tk):
         self.entry_life.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
 
         size_list = ['all', 'small', 'medium', 'big']
-        combo_size = ttk.Combobox(right_frame, textvariable=self.selected_size, values=size_list,
+        size_combobox = ttk.Combobox(right_frame, textvariable=self.selected_size, values=size_list,
                                   width=10, state='readonly', style='Custom.TCombobox')
-        combo_size.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
-        combo_size.set('Select')
+        size_combobox.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
+        size_combobox.set('Select')
 
     # Page 4
     def find_breeds_page4(self, name_list, score_list):
@@ -456,10 +456,11 @@ class PuppyPickerView(tk.Tk):
         breed_label = ttk.Label(self.info_left_frame, text=f'[ {breed} ]', style='TLabel')
         breed_label.pack(side='top', pady=(20, 0), expand=True)
 
-        gender_combo = ttk.Combobox(self.info_left_frame, textvariable=self.selected_gender_combo,
-                                    values=['Male', 'Female'], state='readonly', style='Custom.TCombobox')
-        gender_combo.pack(side='top', pady=10, expand=True)
-        gender_combo.bind('<<ComboboxSelected>>', self.gender_combobox_handler)
+        gender_combobox = ttk.Combobox(self.info_left_frame, textvariable=self.selected_gender_combo,
+                                       values=['Male', 'Female'], state='readonly', style='Custom.TCombobox')
+        gender_combobox.pack(side='top', pady=10, expand=True)
+        gender_combobox.set('Select Gender')
+        gender_combobox.bind('<<ComboboxSelected>>', self.gender_combobox_handler)
 
         # Default gender graph (Male)
         min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
@@ -566,16 +567,16 @@ class PuppyPickerView(tk.Tk):
     #     elif command == 'select_2breed':
     #         pass
 
-    def inform_error(self, inform_text):
+    def report_error(self, inform_text):
         try:
-            self.inform.destroy()
+            self.error.destroy()
         except AttributeError:
             pass
-        self.inform = ttk.Label(self.bottom_frame, text=inform_text,
-                                background='#FFFAF0', foreground='red',
-                                font=('Times New Roman', 20))
-        self.inform.pack(side='left', anchor='e', expand=True)
-        self.after(2000, self.inform.destroy)
+        self.error = ttk.Label(self.bottom_frame, text=inform_text,
+                               background='#FFFAF0', foreground='red',
+                               font=('Times New Roman', 20))
+        self.error.pack(side='left', anchor='e', padx=30, expand=True)
+        self.after(2000, self.error.destroy)
 
     def run(self):
         """

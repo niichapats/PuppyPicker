@@ -22,7 +22,7 @@ class PuppyPickerController:
         if page == 1:
             self.view.find_breeds_page2(self.model.descriptive_lifespan())
         elif page == 2:
-            self.view.run_find_breeds_page3()
+            self.view.find_breeds_page3()
         elif page == 3:
             prefer_list = self.view.get_user_prefer()
             allowed_values = {'0', '1', '2', '3', 'small', 'medium', 'big', 'all'}
@@ -36,15 +36,15 @@ class PuppyPickerController:
                 self.view.inform_error('Please choose a size')
             elif not correct_value:
                 self.view.inform_error('Please enter only 0-3')
-                self.view.clear_user_prefer()
             else:
                 top_name, top_score = self.model.find_matching_breeds(prefer_list)
-                print(top_name)
-                print(top_score)
+                self.breed_match = top_name[0]
                 self.view.find_breeds_page4(top_name, top_score)
+        elif page == 4:
+            self.view.dog_info_page()
 
     def show_info_handler(self):
-        print(self.view.user_preference('show_breed'))
+        self.view.dog_info_page()
 
     def run(self):
         """

@@ -51,6 +51,14 @@ class PuppyPickerController:
         else:
             self.view.report_error('Choose dog breed')
 
+    def ex_show_graph_handler(self):
+        page = self.view.explore_page
+        if self.view.selected1_explore.get() != 'Select Attribute (x)' \
+                and self.view.selected2_explore.get() != 'Select Attribute (y)':
+            self.view.draw_explore_graph(page)
+        else:
+            self.view.report_error('Choose attributes')
+
     def run(self):
         """
         Run the program by running CalculatorView

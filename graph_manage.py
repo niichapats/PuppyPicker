@@ -155,7 +155,7 @@ class GraphManage:
     @staticmethod
     def gender_bar(gender, y_axis):
         x_axis = ['Min height', 'Max Height', 'Min Weight', 'Max Weight']
-        fig = Figure(figsize=(3, 3))
+        fig = Figure(figsize=(3, 3.3))
         ax = fig.add_subplot(111)
 
         if gender == 'Male':
@@ -169,8 +169,8 @@ class GraphManage:
             for i, bar in enumerate(bar_plot.patches):
                 bar.set_color(colors[i % len(colors)])
 
-        ax.set_xlabel('Breeds', fontsize=9)
-        ax.set_ylabel('Score', fontsize=9)
+        ax.set_xlabel('Measurements', fontsize=9)
+        ax.set_ylabel('Inches (Height)\nPounds (Weight)', fontsize=8)
         ax.tick_params(axis='both', which='major', labelsize=8)
 
         ax.set_xticks(range(len(x_axis)))
@@ -179,4 +179,40 @@ class GraphManage:
         fig.tight_layout(pad=0.5)
 
         return fig
+
+    @staticmethod
+    def explore_bar(df, x_axis, y_axis):
+        if x_axis in df.columns and y_axis in df.columns:
+            fig = Figure(figsize=(5.5, 3.5))
+            ax = fig.subplots()
+
+            sns.barplot(data=df, x=x_axis, y=y_axis, ax=ax, color='#E88989')
+
+            ax.set_title(f'{x_axis} vs. {y_axis}', fontsize=8)
+            ax.set_xlabel(x_axis, fontsize=8)
+            ax.set_ylabel(y_axis, fontsize=8)
+            ax.tick_params(axis='both', which='major', labelsize=8)
+            ax.tick_params(axis='x', labelrotation=45)
+
+            fig.tight_layout()
+
+            return fig
+
+    @staticmethod
+    def explore_scatter(df, x_axis, y_axis):
+        if x_axis in df.columns and y_axis in df.columns:
+            fig = Figure(figsize=(5.5, 3.5))
+            ax = fig.subplots()
+
+            sns.scatterplot(data=df, x=x_axis, y=y_axis, ax=ax, color='#E694C7')
+
+            ax.set_title(f'{x_axis} vs. {y_axis}', fontsize=8)
+            ax.set_xlabel(x_axis, fontsize=8)
+            ax.set_ylabel(y_axis, fontsize=8)
+            ax.tick_params(axis='both', which='major', labelsize=8)
+            ax.tick_params(axis='x', labelrotation=45)
+
+            fig.tight_layout()
+
+            return fig
 

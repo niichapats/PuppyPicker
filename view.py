@@ -23,6 +23,7 @@ class PuppyPickerView(tk.Tk):
         self.title('Puppy Picker')
         self.minsize(width=1060, height=750)
         self.df = GraphManage.load_data('breeds.csv')
+        self.graph_manage = GraphManage()
         # Find Matching Breed
         self.page_find_breeds = 0
         self.selected_story_combo = tk.StringVar()
@@ -37,6 +38,9 @@ class PuppyPickerView(tk.Tk):
         self.selected1_explore = tk.StringVar()
         self.selected2_explore = tk.StringVar()
         self.init_component()
+        # Characteristitc Comparison
+        self.selected1_breed_compare = tk.StringVar()
+        self.selected2_breed_compare = tk.StringVar()
 
     def init_component(self):
         # Define color scheme
@@ -133,7 +137,7 @@ class PuppyPickerView(tk.Tk):
         button_commands = [self.find_breeds_page1, self.statistical_page, self.comparison_page]
 
         for i, (text, command) in enumerate(zip(nav_buttons, button_commands)):
-            button = ttk.Button(self.left_frame, text=text, style='Big.TButton', cursor="heart", command=command)
+            button = ttk.Button(self.left_frame, text=text, style='Big.TButton', cursor='heart', command=command)
             button.grid(row=i, column=0, sticky='ew', padx=30, pady=10)
             self.left_frame.grid_rowconfigure(i, weight=1)
 
@@ -389,7 +393,7 @@ class PuppyPickerView(tk.Tk):
         self.right_frame.grid_rowconfigure(4, minsize=70)
 
         # Label and combobox for choosing a breed
-        self.label_choose_breed = ttk.Label(self.right_frame, text='Choose dog breed', style='TLabel')
+        self.label_choose_breed = ttk.Label(self.right_frame, text='Select dog breed', style='TLabel')
         self.label_choose_breed.grid(row=0, column=0, padx=170, pady=(70, 0), sticky='ew')
         self.combobox_breed2 = ttk.Combobox(self.right_frame, width=30, textvariable=self.selected_breed_combo,
                                             values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
@@ -398,7 +402,7 @@ class PuppyPickerView(tk.Tk):
 
         # Button to show information
         self.show_info_button = ttk.Button(self.right_frame, text='Show Information', style='TButton',
-                                           command=self.controller.show_info_handler)
+                                           cursor='heart', command=self.controller.show_info_handler)
         self.show_info_button.grid(row=2, column=0, padx=170, pady=20, sticky='ew')
 
         # Label for data exploration section
@@ -410,7 +414,7 @@ class PuppyPickerView(tk.Tk):
 
         # Button for exploring data
         self.explore_button = ttk.Button(self.right_frame, text='Explore', style='TButton',
-                                         command=self.data_exploration_page)
+                                         cursor='heart', command=self.data_exploration_page)
         self.explore_button.grid(row=4, column=0, padx=170, pady=0, sticky='new')
 
     def dog_info_page(self):
@@ -443,16 +447,7 @@ class PuppyPickerView(tk.Tk):
         gender_combobox.bind('<<ComboboxSelected>>', self.controller.gender_combobox_handler)
 
         # Default gender graph (Male)
-        min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
-        max_height_m = self.df[self.df['breed'] == breed]['max_height_male'].iloc[0]
-        min_weight_m = self.df[self.df['breed'] == breed]['min_weight_male'].iloc[0]
-        max_weight_m = self.df[self.df['breed'] == breed]['max_weight_male'].iloc[0]
-        male_data = [min_height_m, max_height_m, min_weight_m, max_weight_m]
-        gender_bar = GraphManage.gender_bar('Male', male_data)
-        canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
-        self.canvas_widget_gender = canvas.get_tk_widget()
-        self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
-        canvas.draw()
+        self.draw_male_graph(breed)
 
         # Right sub frame
         info_label = ttk.Label(right_frame, text=f'Breed Group: {breed_group}         Size: {breed_size}\n\n'
@@ -503,13 +498,15 @@ class PuppyPickerView(tk.Tk):
         self.middle_frame_explore.pack(side='top', fill='both', expand=True)
         self.bottom_frame_explore.pack(side='top', fill='both', expand=True)
 
-        ex_bar_button = ttk.Button(top_frame_explore, text='Bar Graph', style='TButton', command=self.ex_bar_page)
+        ex_bar_button = ttk.Button(top_frame_explore, text='Bar Graph', style='TButton',
+                                   cursor='heart', command=self.ex_bar_page)
         ex_bar_button.pack(side='left', anchor='ne', padx=40, pady=50, expand=True)
 
-        ex_scatter_button = ttk.Button(top_frame_explore, text='Scatter Plot', style='TButton', command=self.ex_scatter_page)
+        ex_scatter_button = ttk.Button(top_frame_explore, text='Scatter Plot', style='TButton'
+                                       , cursor='heart', command=self.ex_scatter_page)
         ex_scatter_button.pack(side='left', anchor='nw', padx=40, pady=50, expand=True)
 
-        show_graph_button = ttk.Button(top_frame_explore, text='Show Graph', style='TButton',
+        show_graph_button = ttk.Button(top_frame_explore, text='Show Graph', style='TButton', cursor='heart',
                                        command=self.controller.ex_show_graph_handler)
         show_graph_button.pack(side='left', anchor='nw', padx=(100, 0), pady=50, expand=True)
 
@@ -602,6 +599,47 @@ class PuppyPickerView(tk.Tk):
                                     style='TLabel', padding=(45, 0))
         self.menu_label.pack()
 
+        top_frame_compare = ttk.Frame(self.right_frame, style='TFrame')
+        top_frame_compare.pack(side='top', fill='both', expand=True)
+        self.bottom_frame_compare = ttk.Frame(self.right_frame, style='TFrame')
+        self.bottom_frame_compare.pack(side='top', fill='both', expand=True)
+
+        sorted_df = self.df.sort_values(by='breed')
+        sorted_breed_list = sorted_df['breed'].tolist()
+        self.combobox_breed_cp1 = ttk.Combobox(top_frame_compare, width=20, textvariable=self.selected1_breed_compare,
+                                               values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed_cp1.pack(side='left', anchor='ne', padx=10, pady=70, expand=True)
+
+        self.combobox_breed_cp2 = ttk.Combobox(top_frame_compare, width=20, textvariable=self.selected2_breed_compare,
+                                               values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed_cp2.pack(side='left', anchor='nw', padx=10, pady=70, expand=True)
+
+        self.compare_button = ttk.Button(top_frame_compare, text='Show Comparison', cursor='heart',
+                                         command=self.controller.show_compare_handler)
+        self.compare_button.pack(side='left', anchor='nw', padx=(30, 0), pady=65, expand=True)
+        self.combobox_breed_cp1.set('Select Dog Breed')
+        self.combobox_breed_cp2.set('Select Dog Breed')
+
+        compare_list = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
+        # Default graph
+        char_compare_bar = self.graph_manage.compare_bar('Chihuahua', 'Golden Retriever', compare_list)
+        canvas = FigureCanvasTkAgg(char_compare_bar, master=self.bottom_frame_compare)
+        canvas_widget_test = canvas.get_tk_widget()
+        canvas_widget_test.pack(side='top', anchor='n', expand=True)
+        canvas.draw()
+
+    def draw_compare_graph(self):
+        for widget in self.bottom_frame_compare.winfo_children():
+            widget.destroy()
+        compare_list = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
+        breed1 = self.combobox_breed_cp1.get()
+        breed2 = self.combobox_breed_cp2.get()
+        char_compare_bar = self.graph_manage.compare_bar(breed1, breed2, compare_list)
+        canvas = FigureCanvasTkAgg(char_compare_bar, master=self.bottom_frame_compare)
+        canvas_widget_test = canvas.get_tk_widget()
+        canvas_widget_test.pack(side='top', anchor='n', expand=True)
+        canvas.draw()
+
     def report_error(self, inform_text):
         try:
             self.error.destroy()
@@ -609,8 +647,8 @@ class PuppyPickerView(tk.Tk):
             pass
         self.error = ttk.Label(self.bottom_frame, text=inform_text,
                                background='#FFFAF0', foreground='red',
-                               font=('Times New Roman', 20))
-        self.error.pack(side='left', anchor='e', padx=30, expand=True)
+                               font=('Times New Roman', 22))
+        self.error.pack(side='left', anchor='e', padx=60, expand=True)
         self.after(2000, self.error.destroy)
 
     def run(self):

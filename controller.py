@@ -51,11 +51,23 @@ class PuppyPickerController:
         else:
             self.view.report_error('Choose dog breed')
 
+    def gender_combobox_handler(self, event):
+        breed = self.view.selected_breed_combo.get()
+        self.view.canvas_widget_gender.destroy()
+        selected_gender = self.view.selected_gender_combo.get()
+        if selected_gender == 'Male':
+            self.view.draw_male_graph(breed)
+        elif selected_gender == 'Female':
+            self.view.draw_female_graph(breed)
+
     def ex_show_graph_handler(self):
         page = self.view.explore_page
         if self.view.selected1_explore.get() != 'Select Attribute (x)' \
                 and self.view.selected2_explore.get() != 'Select Attribute (y)':
-            self.view.draw_explore_graph(page)
+            if page == 'bar':
+                self.view.draw_explore_bar()
+            elif page == 'scatter':
+                self.view.draw_explore_scatter()
         else:
             self.view.report_error('Choose attributes')
 

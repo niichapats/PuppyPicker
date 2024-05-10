@@ -93,7 +93,7 @@ class PuppyPickerView(tk.Tk):
         self.left_frame.grid(row=1, column=0, sticky='nsew')
         self.create_nav_button()
 
-        self.right_frame = self.create_right_frame()
+        self.right_frame = self.create_right_frame_welcome()
         self.right_frame.grid(row=1, column=1, sticky='nsew', padx=(0, 20))
 
         # Create bottom frame
@@ -107,7 +107,7 @@ class PuppyPickerView(tk.Tk):
         left_frame = ttk.Frame(self, width=400, padding=0, style='TFrame')
         return left_frame
 
-    def create_right_frame(self):
+    def create_right_frame_welcome(self):
         right_frame = ttk.Frame(self, padding=5, style='TFrame')
 
         home_info = ttk.Label(right_frame,
@@ -130,7 +130,7 @@ class PuppyPickerView(tk.Tk):
         Create Navigation buttons
         """
         nav_buttons = ['Find Matching Breeds', 'Statistical Information', 'Characteristics Comparison']
-        button_commands = [self.find_breeds_page1, self.statistical_page1, self.comparison_page]
+        button_commands = [self.find_breeds_page1, self.statistical_page, self.comparison_page]
 
         for i, (text, command) in enumerate(zip(nav_buttons, button_commands)):
             button = ttk.Button(self.left_frame, text=text, style='Big.TButton', cursor="heart", command=command)
@@ -153,7 +153,6 @@ class PuppyPickerView(tk.Tk):
             self.selected_story_combo.set("")
 
     # Find Matching Breeds
-    # Page 1
     def find_breeds_page1(self):
         self.page_find_breeds = 1
         self.menu_label.destroy()
@@ -177,7 +176,6 @@ class PuppyPickerView(tk.Tk):
                                       command=lambda: self.controller.next_button_handler(self.page_find_breeds))
         self.next_button.pack(side=tk.RIGHT, padx=35, pady=25)
 
-    # Page 2
     def find_breeds_page2(self, data):
         self.page_find_breeds = 2
         self.clear_right_frame()
@@ -273,23 +271,6 @@ class PuppyPickerView(tk.Tk):
         self.canvas_widget_story.config(width=240, height=210)
         self.canvas_widget_story.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
 
-    # Page 3
-    # def run_find_breeds_page3(self):
-    #     self.clear_right_frame()
-    #     self.page_find_breeds = 3
-    #     self.progress_bar = ttk.Progressbar(self.right_frame, length=400, mode="indeterminate")
-    #     self.progress_bar.pack(side="bottom")
-    #     self.thread = Thread(target=self.find_breeds_page3)
-    #     self.thread.start()
-    #     self.progress_bar.start(10)
-    #     self.after(10, self.check_ui)
-    #
-    # def check_ui(self):
-    #     if self.thread.is_alive():
-    #         self.after(10, self.check_ui)
-    #     else:
-    #         self.progress_bar.stop()
-
     def find_breeds_page3(self):
         self.clear_right_frame()
         self.page_find_breeds = 3
@@ -345,7 +326,6 @@ class PuppyPickerView(tk.Tk):
         size_combobox.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
         size_combobox.set('Select')
 
-    # Page 4
     def find_breeds_page4(self, name_list, score_list):
         self.clear_right_frame()
         self.page_find_breeds = 4
@@ -380,7 +360,11 @@ class PuppyPickerView(tk.Tk):
         return prefer_list
 
     # Statistical Information
-    def statistical_page1(self):
+    def statistical_page(self):
+        """
+        First page of Statistical Information menu
+        """
+
         # Clear some elements
         self.menu_label.destroy()
         try:
@@ -403,13 +387,6 @@ class PuppyPickerView(tk.Tk):
         self.right_frame.grid_rowconfigure(2, minsize=50)
         self.right_frame.grid_rowconfigure(3, minsize=100)
         self.right_frame.grid_rowconfigure(4, minsize=70)
-
-        # # Label and entry for entering breed
-        # self.label_enter_breed = ttk.Label(self.right_frame, text='Enter dog breed', style='TLabel')
-        # self.label_enter_breed.grid(row=0, column=0, padx=90, pady=(30, 0), sticky='ew')
-        # self.entry_breed = ttk.Entry(self.right_frame, style='TEntry')
-        # self.entry_breed.grid(row=1, column=0, padx=90, pady=(10, 0), sticky='ew')
-        # self.entry_breed.focus()
 
         # Label and combobox for choosing a breed
         self.label_choose_breed = ttk.Label(self.right_frame, text='Choose dog breed', style='TLabel')
@@ -463,7 +440,7 @@ class PuppyPickerView(tk.Tk):
                                        values=['Male', 'Female'], state='readonly', style='Custom.TCombobox')
         gender_combobox.pack(side='top', pady=10, expand=True)
         gender_combobox.set('Select Gender')
-        gender_combobox.bind('<<ComboboxSelected>>', self.gender_combobox_handler)
+        gender_combobox.bind('<<ComboboxSelected>>', self.controller.gender_combobox_handler)
 
         # Default gender graph (Male)
         min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
@@ -483,44 +460,39 @@ class PuppyPickerView(tk.Tk):
                                style='Medium.TLabel')
         info_label.pack(expand=True, pady=10)
 
-        char_bar = GraphManage.create_char_bar(self.df, breed)
+        char_bar = GraphManage.char_bar(self.df, breed)
         canvas = FigureCanvasTkAgg(char_bar, master=right_frame)
         canvas_widget_score = canvas.get_tk_widget()
         canvas_widget_score.pack(side='top', anchor='n', expand=True)
         canvas.draw()
 
-    def gender_combobox_handler(self, event):
-        breed = self.selected_breed_combo.get()
-        self.canvas_widget_gender.destroy()
-
-        # Male
+    def draw_male_graph(self, breed):
         min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
         max_height_m = self.df[self.df['breed'] == breed]['max_height_male'].iloc[0]
         min_weight_m = self.df[self.df['breed'] == breed]['min_weight_male'].iloc[0]
         max_weight_m = self.df[self.df['breed'] == breed]['max_weight_male'].iloc[0]
         male_data = [min_height_m, max_height_m, min_weight_m, max_weight_m]
 
-        # Female
+        gender_bar = GraphManage.gender_bar('Male', male_data)
+        canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
+        self.canvas_widget_gender = canvas.get_tk_widget()
+        self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
+        canvas.draw()
+
+    def draw_female_graph(self, breed):
         min_height_f = self.df[self.df['breed'] == breed]['min_height_female'].iloc[0]
         max_height_f = self.df[self.df['breed'] == breed]['max_height_female'].iloc[0]
         min_weight_f = self.df[self.df['breed'] == breed]['min_weight_female'].iloc[0]
         max_weight_f = self.df[self.df['breed'] == breed]['max_weight_female'].iloc[0]
         female_data = [min_height_f, max_height_f, min_weight_f, max_weight_f]
 
-        selected_gender = self.selected_gender_combo.get()
-        if selected_gender == 'Male':
-            gender_bar = GraphManage.gender_bar('Male', male_data)
-            canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
-            self.canvas_widget_gender = canvas.get_tk_widget()
-            self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
-            canvas.draw()
-        elif selected_gender == 'Female':
-            gender_bar = GraphManage.gender_bar('Female', female_data)
-            canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
-            self.canvas_widget_gender = canvas.get_tk_widget()
-            self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
-            canvas.draw()
+        gender_bar = GraphManage.gender_bar('Female', female_data)
+        canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
+        self.canvas_widget_gender = canvas.get_tk_widget()
+        self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
+        canvas.draw()
 
+    # Data Exploration
     def data_exploration_page(self):
         self.clear_right_frame()
         top_frame_explore = ttk.Frame(self.right_frame, style='TFrame')
@@ -564,6 +536,7 @@ class PuppyPickerView(tk.Tk):
         bar_combobox1.pack(side='left', anchor='nw', padx=30, expand=True)
         bar_combobox1.set('Select Attribute (y)')
 
+        # Default graph
         default = GraphManage.explore_bar(self.df, 'breed_group', 'adaptability')
         canvas = FigureCanvasTkAgg(default, master=self.bottom_frame_explore)
         canvas_widget_test = canvas.get_tk_widget()
@@ -592,30 +565,32 @@ class PuppyPickerView(tk.Tk):
         bar_combobox1.pack(side='left', anchor='nw', padx=30, expand=True)
         bar_combobox1.set('Select Attribute (y)')
 
+        # Default graph
         default = GraphManage.explore_scatter(self.df, 'max_height_male', 'average_lifespan')
         canvas = FigureCanvasTkAgg(default, master=self.bottom_frame_explore)
         canvas_widget_test = canvas.get_tk_widget()
         canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
         canvas.draw()
 
-    def draw_explore_graph(self, page):
-        if page == 'bar':
-            for widget in self.bottom_frame_explore.winfo_children():
-                widget.destroy()
-            explore_bar = GraphManage.explore_bar(self.df, self.selected1_explore.get(), self.selected2_explore.get())
-            canvas = FigureCanvasTkAgg(explore_bar, master=self.bottom_frame_explore)
-            canvas_widget_test = canvas.get_tk_widget()
-            canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
-            canvas.draw()
-        elif page == 'scatter':
-            for widget in self.bottom_frame_explore.winfo_children():
-                widget.destroy()
-            explore_bar = GraphManage.explore_scatter(self.df, self.selected1_explore.get(), self.selected2_explore.get())
-            canvas = FigureCanvasTkAgg(explore_bar, master=self.bottom_frame_explore)
-            canvas_widget_test = canvas.get_tk_widget()
-            canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
-            canvas.draw()
+    def draw_explore_bar(self):
+        for widget in self.bottom_frame_explore.winfo_children():
+            widget.destroy()
+        explore_bar = GraphManage.explore_bar(self.df, self.selected1_explore.get(), self.selected2_explore.get())
+        canvas = FigureCanvasTkAgg(explore_bar, master=self.bottom_frame_explore)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.pack(side='top', anchor='n', pady=20, expand=True)
+        canvas.draw()
 
+    def draw_explore_scatter(self):
+        for widget in self.bottom_frame_explore.winfo_children():
+            widget.destroy()
+        explore_scatter = GraphManage.explore_scatter(self.df, self.selected1_explore.get(), self.selected2_explore.get())
+        canvas = FigureCanvasTkAgg(explore_scatter, master=self.bottom_frame_explore)
+        canvas_widget_test = canvas.get_tk_widget()
+        canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
+        canvas.draw()
+
+    # Characteristic Comparison
     def comparison_page(self):
         self.menu_label.destroy()
         try:

@@ -1,7 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 
@@ -104,7 +104,7 @@ class GraphManage:
             return fig
 
     @staticmethod
-    def create_char_bar(df, breed):
+    def char_bar(df, breed):
 
         selected_breeds = [breed]
         characteristics = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']

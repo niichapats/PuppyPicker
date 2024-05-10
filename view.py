@@ -1,8 +1,6 @@
 """ UI for Puppy Picker """
 
 import tkinter as tk
-import time
-from threading import Thread
 from tkinter import ttk
 from PIL import Image, ImageTk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -37,10 +35,10 @@ class PuppyPickerView(tk.Tk):
         self.explore_page = 0
         self.selected1_explore = tk.StringVar()
         self.selected2_explore = tk.StringVar()
-        self.init_component()
-        # Characteristitc Comparison
+        # Characteristic Comparison
         self.selected1_breed_compare = tk.StringVar()
         self.selected2_breed_compare = tk.StringVar()
+        self.init_component()
 
     def init_component(self):
         # Define color scheme
@@ -212,7 +210,7 @@ class PuppyPickerView(tk.Tk):
         story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(5, 0))
         story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
 
-        # Graph 2: default histogram
+        # Graph 1: default histogram
         self.story_hist = self.graph_manage.create_histogram('max_life_expectancy', 'small')
         canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_right_frame)
         canvas.draw()
@@ -220,8 +218,8 @@ class PuppyPickerView(tk.Tk):
         self.canvas_widget_story.config(width=240, height=210)
         self.canvas_widget_story.pack(side="top", fill="both", expand=True, padx=(20, 40))
 
-        # Graph 1: Bar graph represent size and lifespan
-        fig_bar = GraphManage.story_bar(self.df)
+        # Graph 2: Bar graph represent size and lifespan
+        fig_bar = self.graph_manage.story_bar()
         canvas = FigureCanvasTkAgg(fig_bar, master=self.top_sub_frame)
         canvas_widget_bar = canvas.get_tk_widget()
         canvas_widget_bar.pack(side="left", fill="both", expand=True)
@@ -232,14 +230,14 @@ class PuppyPickerView(tk.Tk):
         self.story_middle_frame.pack(side="top", fill="both", expand=True)
 
         # Graph 3: scatter plot
-        story_scatter = GraphManage.story_scatter(self.df)
+        story_scatter = self.graph_manage.story_scatter()
         canvas = FigureCanvasTkAgg(story_scatter, master=self.story_middle_frame)
         canvas_widget_heatmap = canvas.get_tk_widget()
         canvas_widget_heatmap.pack(side="left", fill="both", expand=True)
         canvas.draw()
 
         # Graph 4: correlation heat map
-        story_heatmap = GraphManage.story_heatmap(self.df)
+        story_heatmap = self.graph_manage.story_heatmap()
         canvas = FigureCanvasTkAgg(story_heatmap, master=self.story_middle_frame)
         canvas_widget_heatmap = canvas.get_tk_widget()
         canvas_widget_heatmap.pack(side="left", fill="both", expand=True)
@@ -340,7 +338,7 @@ class PuppyPickerView(tk.Tk):
         left_frame.pack(side="left", fill="y", expand=True, padx=10, pady=10)
         right_frame.pack(side="right", fill="y", expand=True, padx=10, pady=10)
 
-        score_graph = GraphManage.score_bar(name_list, score_list)
+        score_graph = self.graph_manage.score_bar(name_list, score_list)
         canvas = FigureCanvasTkAgg(score_graph, master=left_frame)
         canvas_widget_score = canvas.get_tk_widget()
         canvas_widget_score.pack(side="left", expand=True)
@@ -455,33 +453,21 @@ class PuppyPickerView(tk.Tk):
                                style='Medium.TLabel')
         info_label.pack(expand=True, pady=10)
 
-        char_bar = GraphManage.char_bar(self.df, breed)
+        char_bar = self.graph_manage.char_bar(breed)
         canvas = FigureCanvasTkAgg(char_bar, master=right_frame)
         canvas_widget_score = canvas.get_tk_widget()
         canvas_widget_score.pack(side='top', anchor='n', expand=True)
         canvas.draw()
 
     def draw_male_graph(self, breed):
-        min_height_m = self.df[self.df['breed'] == breed]['min_height_male'].iloc[0]
-        max_height_m = self.df[self.df['breed'] == breed]['max_height_male'].iloc[0]
-        min_weight_m = self.df[self.df['breed'] == breed]['min_weight_male'].iloc[0]
-        max_weight_m = self.df[self.df['breed'] == breed]['max_weight_male'].iloc[0]
-        male_data = [min_height_m, max_height_m, min_weight_m, max_weight_m]
-
-        gender_bar = GraphManage.gender_bar('Male', male_data)
+        gender_bar = self.graph_manage.male_bar(breed)
         canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
         self.canvas_widget_gender = canvas.get_tk_widget()
         self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
         canvas.draw()
 
     def draw_female_graph(self, breed):
-        min_height_f = self.df[self.df['breed'] == breed]['min_height_female'].iloc[0]
-        max_height_f = self.df[self.df['breed'] == breed]['max_height_female'].iloc[0]
-        min_weight_f = self.df[self.df['breed'] == breed]['min_weight_female'].iloc[0]
-        max_weight_f = self.df[self.df['breed'] == breed]['max_weight_female'].iloc[0]
-        female_data = [min_height_f, max_height_f, min_weight_f, max_weight_f]
-
-        gender_bar = GraphManage.gender_bar('Female', female_data)
+        gender_bar = self.graph_manage.female_bar(breed)
         canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
         self.canvas_widget_gender = canvas.get_tk_widget()
         self.canvas_widget_gender.pack(side='top', pady=10, anchor='n', expand=True)
@@ -538,7 +524,7 @@ class PuppyPickerView(tk.Tk):
         bar_combobox2.set('Select Attribute (y)')
 
         # Default graph
-        default = GraphManage.explore_bar(self.df, 'breed_group', 'adaptability')
+        default = self.graph_manage.explore_bar('breed_group', 'adaptability')
         canvas = FigureCanvasTkAgg(default, master=self.bottom_frame_explore)
         canvas_widget_test = canvas.get_tk_widget()
         canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
@@ -567,7 +553,7 @@ class PuppyPickerView(tk.Tk):
         bar_combobox2.set('Select Attribute (y)')
 
         # Default graph
-        default = GraphManage.explore_scatter(self.df, 'max_height_male', 'average_lifespan')
+        default = self.graph_manage.explore_scatter('max_height_male', 'average_lifespan')
         canvas = FigureCanvasTkAgg(default, master=self.bottom_frame_explore)
         canvas_widget_test = canvas.get_tk_widget()
         canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
@@ -604,7 +590,7 @@ class PuppyPickerView(tk.Tk):
     def draw_explore_bar(self):
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
-        explore_bar = GraphManage.explore_bar(self.df, self.selected1_explore.get(), self.selected2_explore.get())
+        explore_bar = self.graph_manage.explore_bar(self.selected1_explore.get(), self.selected2_explore.get())
         canvas = FigureCanvasTkAgg(explore_bar, master=self.bottom_frame_explore)
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.pack(side='top', anchor='n', pady=20, expand=True)
@@ -613,8 +599,8 @@ class PuppyPickerView(tk.Tk):
     def draw_explore_scatter(self):
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
-        explore_scatter = GraphManage.explore_scatter(self.df, self.selected1_explore.get(),
-                                                      self.selected2_explore.get())
+        explore_scatter = self.graph_manage.explore_scatter(self.selected1_explore.get(),
+                                                            self.selected2_explore.get())
         canvas = FigureCanvasTkAgg(explore_scatter, master=self.bottom_frame_explore)
         canvas_widget_test = canvas.get_tk_widget()
         canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
@@ -637,7 +623,6 @@ class PuppyPickerView(tk.Tk):
             canvas_widget_test = canvas.get_tk_widget()
             canvas_widget_test.pack(side='top', anchor='n', pady=20, expand=True)
             canvas.draw()
-
 
     # Characteristic Comparison
     def comparison_page(self):

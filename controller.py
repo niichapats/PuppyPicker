@@ -2,6 +2,7 @@
 
 from view import PuppyPickerView
 from model import PuppyPickerModel
+from graph_manage import GraphManage
 
 
 class PuppyPickerController:
@@ -17,6 +18,7 @@ class PuppyPickerController:
         """
         self.model = PuppyPickerModel()
         self.view = PuppyPickerView(self)
+        self.graph_manage = GraphManage()
 
     def next_button_handler(self, page):
         if page == 1:
@@ -33,7 +35,7 @@ class PuppyPickerController:
             if '' in prefer_list:
                 self.view.report_error('Please complete all required fields')
             elif 'Select' in prefer_list:
-                self.view.report_error('Please choose a size')
+                self.view.report_error('Please select a size')
             elif not correct_value:
                 self.view.report_error('Please enter only 0-3')
             else:
@@ -43,13 +45,13 @@ class PuppyPickerController:
             if self.view.selected_breed_combo.get() != 'Select':
                 self.view.dog_info_page()
             else:
-                self.view.report_error('Choose dog breed')
+                self.view.report_error('Please Select Dog Breed')
 
     def show_info_handler(self):
         if self.view.selected_breed_combo.get() != 'Select':
             self.view.dog_info_page()
         else:
-            self.view.report_error('Choose dog breed')
+            self.view.report_error('Please Select Dog Breed')
 
     def gender_combobox_handler(self, event):
         breed = self.view.selected_breed_combo.get()
@@ -69,7 +71,14 @@ class PuppyPickerController:
             elif page == 'scatter':
                 self.view.draw_explore_scatter()
         else:
-            self.view.report_error('Choose attributes')
+            self.view.report_error('Please Select attributes')
+
+    def show_compare_handler(self):
+        if self.view.selected1_breed_compare.get() != 'Select Dog Breed' \
+                and self.view.selected2_breed_compare.get() != 'Select Dog Breed':
+            self.view.draw_compare_graph()
+        else:
+            self.view.report_error('Please Select Dog Breed')
 
     def run(self):
         """

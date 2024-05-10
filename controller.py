@@ -70,6 +70,12 @@ class PuppyPickerController:
                 self.view.draw_explore_bar()
             elif page == 'scatter':
                 self.view.draw_explore_scatter()
+            elif page == 'histogram':
+                if self.view.selected1_explore.get() != 'Select Group' \
+                        and self.view.selected2_explore.get() != 'Select Attribute':
+                    self.view.draw_explore_hist()
+                else:
+                    self.view.report_error('Please Select attributes')
         else:
             self.view.report_error('Please Select attributes')
 

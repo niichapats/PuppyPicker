@@ -27,22 +27,30 @@ class GraphManage:
 
         return df
 
-    @staticmethod
-    def create_histogram(df, selected_var):
+    def create_histogram(self, selected_var, size):
         """
         Creates a histogram figure of the specified variable from the dataframe.
         """
-        if selected_var in df.columns:
+        if size == 'small':
             fig = Figure(figsize=(4, 3))
             ax = fig.add_subplot(111)
-            df.hist(column=selected_var, ax=ax, color='#CDC673')
+            self.df.hist(column=selected_var, ax=ax, color='#CDC673')
             ax.set_title(f'{selected_var} Histogram', fontsize=6)
             ax.set_xlabel(selected_var, fontsize=6)
             ax.set_ylabel('Frequency', fontsize=6)
             ax.tick_params(axis='both', which='major', labelsize=6)
-
             fig.tight_layout(pad=2.5)
-
+            return fig
+        elif size == 'big':
+            fig = Figure(figsize=(5.5, 3.5))
+            ax = fig.add_subplot(111)
+            self.df.hist(column=selected_var, ax=ax, color='#CDC673')
+            ax.set_title(f'{selected_var} Histogram', fontsize=8)
+            ax.set_xlabel(selected_var, fontsize=8)
+            ax.set_ylabel('Frequency', fontsize=8)
+            ax.tick_params(axis='both', which='major', labelsize=8)
+            ax.tick_params(axis='x', labelrotation=45)
+            fig.tight_layout()
             return fig
 
     @staticmethod
@@ -211,6 +219,20 @@ class GraphManage:
 
             return fig
 
+    def explore_breed_group_histgram(self, selected_group, selected_attribute):
+        filtered_df = self.df[self.df['breed_group'] == selected_group]
+        fig = Figure(figsize=(5.5, 3.5))
+        ax = fig.add_subplot(111)
+        filtered_df.hist(column=selected_attribute, ax=ax, color='#CDC673')
+        ax.set_title(f'{selected_attribute} Histogram of {selected_group}', fontsize=10)
+        ax.set_xlabel(selected_attribute, fontsize=8)
+        ax.set_ylabel('Frequency', fontsize=8)
+        ax.tick_params(axis='both', which='major', labelsize=8)
+
+        fig.tight_layout()
+
+        return fig
+
     def compare_bar(self, breed1, breed2, compare):
         breed1_data = [self.df.loc[self.df['breed'] == breed1, comp].iloc[0] for comp in compare]
         breed2_data = [self.df.loc[self.df['breed'] == breed2, comp].iloc[0] for comp in compare]
@@ -218,8 +240,8 @@ class GraphManage:
         fig = Figure(figsize=(5.5, 3.7))
         ax = fig.subplots()
         x_axis = np.arange(len(compare))
-        ax.bar(x_axis - 0.2, breed1_data, 0.4, label=breed1, color='#DB92B9')
-        ax.bar(x_axis + 0.2, breed2_data, 0.4, label=breed2, color='#DBD91A')
+        ax.bar(x_axis - 0.2, breed1_data, 0.4, label=breed1, color='#F4BBD9')
+        ax.bar(x_axis + 0.2, breed2_data, 0.4, label=breed2, color='#E1E05A')
 
         ax.set_xlabel('Characteristics', fontsize=8)
         ax.set_ylabel('Scores', fontsize=8)

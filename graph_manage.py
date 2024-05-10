@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 
 class GraphManage:
     def __init__(self):
-        pass
+        self.df = self.load_data('breeds.csv')
 
     @staticmethod
     def load_data(filepath):
@@ -94,7 +94,6 @@ class GraphManage:
             colors = ['#27408B', '#008080', '#71C671']
             for i, bar in enumerate(bar_plot.patches):
                 bar.set_color(colors[i % len(colors)])
-
             ax.set_title('Average Lifespan by Size Category', fontsize=6)
             ax.set_xlabel('Size Category', fontsize=6)
             ax.set_ylabel('Average Lifespan (Years)', fontsize=6)
@@ -159,15 +158,11 @@ class GraphManage:
         ax = fig.add_subplot(111)
 
         if gender == 'Male':
-            bar_plot = ax.bar(x_axis, y_axis)
             colors = ['#AFA3D1', '#8E7FCD', '#89A5D4', '#596EAD']
-            for i, bar in enumerate(bar_plot.patches):
-                bar.set_color(colors[i % len(colors)])
+            ax.bar(x_axis, y_axis, color=colors)
         elif gender == 'Female':
-            bar_plot = ax.bar(x_axis, y_axis)
             colors = ['#D1A3D1', '#CD7FC1', '#D89C9C', '#CB7988']
-            for i, bar in enumerate(bar_plot.patches):
-                bar.set_color(colors[i % len(colors)])
+            ax.bar(x_axis, y_axis, color=colors)
 
         ax.set_xlabel('Measurements', fontsize=9)
         ax.set_ylabel('Inches (Height)\nPounds (Weight)', fontsize=8)
@@ -215,4 +210,28 @@ class GraphManage:
             fig.tight_layout()
 
             return fig
+
+    def compare_bar(self, breed1, breed2, compare):
+        breed1_data = [self.df.loc[self.df['breed'] == breed1, comp].iloc[0] for comp in compare]
+        breed2_data = [self.df.loc[self.df['breed'] == breed2, comp].iloc[0] for comp in compare]
+
+        fig = Figure(figsize=(5.5, 3.7))
+        ax = fig.subplots()
+        x_axis = np.arange(len(compare))
+        ax.bar(x_axis - 0.2, breed1_data, 0.4, label=breed1, color='#DB92B9')
+        ax.bar(x_axis + 0.2, breed2_data, 0.4, label=breed2, color='#DBD91A')
+
+        ax.set_xlabel('Characteristics', fontsize=8)
+        ax.set_ylabel('Scores', fontsize=8)
+        ax.set_title('Comparison of Dog Breed Characteristics', fontsize=9.5)
+        ax.legend(fontsize=8)
+        ax.set_xticks(x_axis)
+        ax.set_yticks([0, 1, 2, 3, 4, 5])
+        ax.set_xticklabels(compare, rotation=45)
+        ax.tick_params(axis='both', which='major', labelsize=8)
+        fig.tight_layout(pad=0.5)
+
+        return fig
+
+
 

@@ -46,6 +46,17 @@ Or if you are using a Unix-like system, you might prefer:
 python3 main.py
 ```
 
+## Example UI
+
+| Menu                                       | Example UI                       |
+|--------------------------------------------|----------------------------------|
+| Find Matching Breeds                       | ![Find1](example_ui/find1.png)   |
+| Find Matching Breeds                       | ![Find2](example_ui/find2.png)   |
+| Statistical Information (Dog Information)  | ![Info](example_ui/dog_info.png) |
+| Statistical Information (Data Exploration) | ![Info](example_ui/explore.png)  |
+| Characteristic Comparison                  | ![Info](example_ui/compare.png)  |
+
+
 ## Project Documents
 [Project Proposal](https://docs.google.com/document/d/1PfOkQNRNssTYF7hYASw-kZtYws7OuAx6x-9RGq7cPsQ/edit?usp=sharing)  
 [Development Plan](https://github.com/niichapats/PuppyPicker/wiki/Development-Plan)  

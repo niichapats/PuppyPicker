@@ -45,3 +45,12 @@ Or if you are using a Unix-like system, you might prefer
 ```
 python3 main.py
 ```
+
+## Project Documents
+[Project Proposal](https://docs.google.com/document/d/1PfOkQNRNssTYF7hYASw-kZtYws7OuAx6x-9RGq7cPsQ/edit?usp=sharing)  
+[Development Plan](Development_Plan)  
+[UML Diagrams](UML_Diagrams)  
+
+## Sources of data
+[Dog Breeds dataset 1](https://www.kaggle.com/datasets/mexwell/dog-breeds-dogtime-dataset)  
+[Dog Breeds dataset 2](https://www.kaggle.com/datasets/warcoder/dog-breeds-details)

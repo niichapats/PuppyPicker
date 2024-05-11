@@ -25,8 +25,6 @@ class PuppyPickerView(tk.Tk):
         # Find Matching Breed
         self.page_find_breeds = 0
         self.selected_story_combo = tk.StringVar()
-        self.default_story_combo = 'Select Histogram'
-        self.selected_story_combo.set(self.default_story_combo)
         self.selected_size = tk.StringVar()
         # Statistical Information
         self.selected_breed_combo = tk.StringVar()
@@ -235,7 +233,8 @@ class PuppyPickerView(tk.Tk):
                                       values=story_hist_list, state="readonly",
                                       style='Custom.TCombobox')
         story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(5, 0))
-        story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
+        story_combobox.set('Select Histogram')
+        story_combobox.bind('<<ComboboxSelected>>', self.controller.story_combobox_handler)
 
         # Graph 1: default histogram
         self.story_hist = self.graph_manage.create_histogram('max_life_expectancy', 'small')
@@ -281,14 +280,6 @@ class PuppyPickerView(tk.Tk):
                                  'Please consider this when selecting your new puppy.',
                             style='Small.TLabel')
         summary.pack(side="top", fill="both", expand=True)
-
-    def story_combobox_handler(self, event):
-        """
-        Handle combobox selection in second page of "Find Matching Breeds" menu.
-        """
-        selected_var = self.selected_story_combo.get()
-        if selected_var != self.default_story_combo:
-            self.update_hist(selected_var)
 
     def update_hist(self, selected_var):
         """

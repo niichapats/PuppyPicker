@@ -51,6 +51,14 @@ class PuppyPickerController:
             else:
                 self.view.report_error('Please Select Dog Breed')
 
+    def story_combobox_handler(self, event):
+        """
+        Handle combobox selection in second page of "Find Matching Breeds" menu.
+        """
+        selected_var = self.view.selected_story_combo.get()
+        if selected_var != 'Select Histogram':
+            self.view.update_hist(selected_var)
+
     def show_info_handler(self):
         """
         Displays detailed information for a selected dog breed.

@@ -319,6 +319,6 @@ class GraphManage:
         ax.set_yticks([0, 1, 2, 3, 4, 5])
         ax.set_xticklabels(compare, rotation=45)
         ax.tick_params(axis='both', which='major', labelsize=8)
-        fig.tight_layout(pad=0.5)
+        fig.tight_layout(pad=1.5)
 
         return fig

@@ -48,13 +48,13 @@ python3 main.py
 
 ## Example UI
 
-| Menu                                       | Example UI                       |
-|--------------------------------------------|----------------------------------|
-| Find Matching Breeds                       | ![Find1](example_ui/find1.png)   |
-| Find Matching Breeds                       | ![Find2](example_ui/find2.png)   |
-| Statistical Information (Dog Information)  | ![Info](example_ui/dog_info.png) |
-| Statistical Information (Data Exploration) | ![Info](example_ui/explore.png)  |
-| Characteristic Comparison                  | ![Info](example_ui/compare.png)  |
+| Menu                                       | Example UI                         |
+|--------------------------------------------|------------------------------------|
+| Find Matching Breeds                       | ![Find1](example_ui/find1.png)     |
+| Find Matching Breeds                       | ![Find2](example_ui/find2.png)     |
+| Statistical Information (Dog Information)  | ![Info](example_ui/dog_info.png)   |
+| Statistical Information (Data Exploration) | ![Info](example_ui/explore.png)    |
+| Characteristic Comparison                  | ![Info](example_ui/compare.png)    |
 
 
 ## Project Documents

@@ -121,7 +121,9 @@ class PuppyPickerView(tk.Tk):
         right_frame = ttk.Frame(self, padding=5, style='TFrame')
 
         home_info = ttk.Label(right_frame,
-                              text="Welcome !\n\nLet's explore breed traits through detailed graphs and \n\nfind your ideal match with personalized recommendations.",
+                              text="Welcome !\n\nLet's explore breed traits "
+                                   "through detailed graphs and \n\nfind your "
+                                   "ideal match with personalized recommendations.",
                               style='WhiteCenter.TLabel')
         home_info.pack(fill="both", expand=True)
         return right_frame
@@ -131,7 +133,8 @@ class PuppyPickerView(tk.Tk):
         Bottom frame containing exit button and next button
         """
         bottom_frame = ttk.Frame(self)
-        exit_button = ttk.Button(bottom_frame, text="Exit", style='Big.TButton', cursor="heart", command=self.destroy)
+        exit_button = ttk.Button(bottom_frame, text="Exit", style='Big.TButton',
+                                 cursor="heart", command=self.destroy)
         exit_button.pack(side=tk.LEFT, padx=35, pady=25)
         return bottom_frame
 
@@ -139,11 +142,13 @@ class PuppyPickerView(tk.Tk):
         """
         Create Navigation buttons
         """
-        nav_buttons = ['Find Matching Breeds', 'Statistical Information', 'Characteristics Comparison']
+        nav_buttons = ['Find Matching Breeds', 'Statistical Information',
+                       'Characteristics Comparison']
         button_commands = [self.find_breeds_page1, self.statistical_page, self.comparison_page]
 
         for i, (text, command) in enumerate(zip(nav_buttons, button_commands)):
-            button = ttk.Button(self.left_frame, text=text, style='Big.TButton', cursor='heart', command=command)
+            button = ttk.Button(self.left_frame, text=text, style='Big.TButton',
+                                cursor='heart', command=command)
             button.grid(row=i, column=0, sticky='ew', padx=30, pady=10)
             self.left_frame.grid_rowconfigure(i, weight=1)
 
@@ -175,17 +180,21 @@ class PuppyPickerView(tk.Tk):
             pass
         self.clear_right_frame()
 
-        self.menu_label = ttk.Label(self.top_frame, text='Find Matching Breeds', style='TLabel', padding=(60, 0))
+        self.menu_label = ttk.Label(self.top_frame, text='Find Matching Breeds',
+                                    style='TLabel', padding=(60, 0))
         self.menu_label.pack()
 
         menu_info = ttk.Label(self.right_frame,
-                              text="   Choose size of a dog you prefer and rate the importance you place on   \n\n"
-                                   "   each characteristic when considering getting a dog.   \n\n\n\n"
+                              text="   Choose size of a dog you prefer and rate "
+                                   "the importance you place on   \n\n"
+                                   "   each characteristic when considering "
+                                   "getting a dog.   \n\n\n\n"
                                    "   Before Finding your matching breeds,    \n\n"
                                    "   let’s see some interesting story    ",
                               style='WhiteCenter.TLabel')
         menu_info.pack(fill='both', expand=True)
-        self.next_button = ttk.Button(self.bottom_frame, text="Next", style='Big.TButton', cursor="heart",
+        self.next_button = ttk.Button(self.bottom_frame, text="Next",
+                                      style='Big.TButton', cursor="heart",
                                       command=lambda: self.controller.next_button_handler(self.page_find_breeds))
         self.next_button.pack(side=tk.RIGHT, padx=35, pady=25)
 
@@ -218,10 +227,13 @@ class PuppyPickerView(tk.Tk):
         self.story_top_left_frame.pack(side="left", fill="both", expand=True)
 
         # Combo box for selecting histogram
-        story_hist_list = ['max_life_expectancy', 'max_height_male', 'max_height_female', 'max_weight_male',
+        story_hist_list = ['max_life_expectancy', 'max_height_male',
+                           'max_height_female', 'max_weight_male',
                            'max_weight_female']
-        story_combobox = ttk.Combobox(self.story_top_left_frame, textvariable=self.selected_story_combo,
-                                      values=story_hist_list, state="readonly", style='Custom.TCombobox')
+        story_combobox = ttk.Combobox(self.story_top_left_frame,
+                                      textvariable=self.selected_story_combo,
+                                      values=story_hist_list, state="readonly",
+                                      style='Custom.TCombobox')
         story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(5, 0))
         story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
 
@@ -264,7 +276,8 @@ class PuppyPickerView(tk.Tk):
 
         # Label 2: summary of the storytelling
         summary = ttk.Label(story_bottom_frame,
-                            text='Our data highlights a trend: larger dogs often have shorter lifespans.\n'
+                            text='Our data highlights a trend: larger dogs '
+                                 'often have shorter lifespans.\n'
                                  'Please consider this when selecting your new puppy.',
                             style='Small.TLabel')
         summary.pack(side="top", fill="both", expand=True)
@@ -284,7 +297,7 @@ class PuppyPickerView(tk.Tk):
         """
         self.canvas_widget_story.destroy()
         self.story_hist = self.graph_manage.create_histogram(selected_var, 'small')
-        canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_right_frame)
+        canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_left_frame)
         canvas.draw()
         self.canvas_widget_story = canvas.get_tk_widget()
         self.canvas_widget_story.config(width=240, height=210)
@@ -333,7 +346,7 @@ class PuppyPickerView(tk.Tk):
         self.entry_train.pack(side="top", anchor='ne', padx=20, pady=(20, 25))
 
         # right sub frame
-        label2_widget = ttk.Label(right_frame, text='Exercise needs\n\n\n' 
+        label2_widget = ttk.Label(right_frame, text='Exercise needs\n\n\n'
                                                     'Long lifespan\n\n\n'
                                                     'Size',
                                   style='TLabel', padding=10)
@@ -382,7 +395,8 @@ class PuppyPickerView(tk.Tk):
         best_match.pack(padx=10, expand=True)
 
         self.combobox_breed1 = ttk.Combobox(right_frame, textvariable=self.selected_breed_combo,
-                                            values=name_list, state='readonly', style='Custom.TCombobox')
+                                            values=name_list, state='readonly',
+                                            style='Custom.TCombobox')
         self.combobox_breed1.pack(anchor='n', padx=10, expand=True)
         self.combobox_breed1.set('Select')
 
@@ -428,16 +442,21 @@ class PuppyPickerView(tk.Tk):
         self.right_frame.grid_rowconfigure(4, minsize=70)
 
         # Label and combobox for choosing a breed
-        self.label_choose_breed = ttk.Label(self.right_frame, text='Select dog breed', style='TLabel')
+        self.label_choose_breed = ttk.Label(self.right_frame,
+                                            text='Select dog breed', style='TLabel')
         self.label_choose_breed.grid(row=0, column=0, padx=170, pady=(70, 0), sticky='ew')
-        self.combobox_breed2 = ttk.Combobox(self.right_frame, width=30, textvariable=self.selected_breed_combo,
-                                            values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed2 = ttk.Combobox(self.right_frame, width=30,
+                                            textvariable=self.selected_breed_combo,
+                                            values=sorted_breed_list, state='readonly',
+                                            style='Custom.TCombobox')
         self.combobox_breed2.grid(row=1, column=0, padx=170, pady=(20, 0), sticky='ew')
         self.combobox_breed2.set('Select')
 
         # Button to show information
-        self.show_info_button = ttk.Button(self.right_frame, text='Show Information', style='TButton',
-                                           cursor='heart', command=self.controller.show_info_handler)
+        self.show_info_button = ttk.Button(self.right_frame, text='Show Information',
+                                           style='TButton',
+                                           cursor='heart',
+                                           command=self.controller.show_info_handler)
         self.show_info_button.grid(row=2, column=0, padx=170, pady=20, sticky='ew')
 
         # Label for data exploration section
@@ -481,8 +500,10 @@ class PuppyPickerView(tk.Tk):
         breed_label = ttk.Label(self.info_left_frame, text=f'[ {breed} ]', style='TLabel')
         breed_label.pack(side='top', pady=(20, 0), expand=True)
 
-        gender_combobox = ttk.Combobox(self.info_left_frame, textvariable=self.selected_gender_combo,
-                                       values=['Male', 'Female'], state='readonly', style='Custom.TCombobox')
+        gender_combobox = ttk.Combobox(self.info_left_frame,
+                                       textvariable=self.selected_gender_combo,
+                                       values=['Male', 'Female'], state='readonly',
+                                       style='Custom.TCombobox')
         gender_combobox.pack(side='top', pady=10, expand=True)
         gender_combobox.set('Select Gender')
         gender_combobox.bind('<<ComboboxSelected>>', self.controller.gender_combobox_handler)
@@ -552,7 +573,8 @@ class PuppyPickerView(tk.Tk):
                                        , cursor='heart', command=self.explore_hist_page)
         ex_scatter_button.pack(side='left', anchor='nw', padx=15, pady=50, expand=True)
 
-        show_graph_button = ttk.Button(top_frame_explore, text='Show Graph', style='TButton', cursor='heart',
+        show_graph_button = ttk.Button(top_frame_explore, text='Show Graph',
+                                       style='TButton', cursor='heart',
                                        command=self.controller.ex_show_graph_handler)
         show_graph_button.pack(side='left', anchor='nw', padx=(100, 0), pady=50, expand=True)
 
@@ -599,18 +621,24 @@ class PuppyPickerView(tk.Tk):
         for widget in self.middle_frame_explore.winfo_children():
             widget.destroy()
         # Attribute 1
-        scatter_list1 = ['max_height_male', 'max_height_female', 'max_weight_male', 'max_weight_female',
+        scatter_list1 = ['max_height_male', 'max_height_female',
+                         'max_weight_male', 'max_weight_female',
                          'average_lifespan', 'average_size']
-        bar_combobox1 = ttk.Combobox(self.middle_frame_explore, textvariable=self.selected1_explore,
-                                     values=scatter_list1, state='readonly', style='Custom.TCombobox')
+        bar_combobox1 = ttk.Combobox(self.middle_frame_explore,
+                                     textvariable=self.selected1_explore,
+                                     values=scatter_list1, state='readonly',
+                                     style='Custom.TCombobox')
         bar_combobox1.pack(side='left', anchor='ne', padx=30, expand=True)
         bar_combobox1.set('Select Attribute (x)')
 
         # Attribute 2
-        scatter_list2 = ['max_height_male', 'max_height_female', 'max_weight_male', 'max_weight_female',
+        scatter_list2 = ['max_height_male', 'max_height_female',
+                         'max_weight_male', 'max_weight_female',
                          'average_lifespan', 'average_size']
-        bar_combobox2 = ttk.Combobox(self.middle_frame_explore, textvariable=self.selected2_explore,
-                                     values=scatter_list2, state='readonly', style='Custom.TCombobox')
+        bar_combobox2 = ttk.Combobox(self.middle_frame_explore,
+                                     textvariable=self.selected2_explore,
+                                     values=scatter_list2, state='readonly',
+                                     style='Custom.TCombobox')
         bar_combobox2.pack(side='left', anchor='nw', padx=30, expand=True)
         bar_combobox2.set('Select Attribute (y)')
 
@@ -630,14 +658,18 @@ class PuppyPickerView(tk.Tk):
             widget.destroy()
         for widget in self.middle_frame_explore.winfo_children():
             widget.destroy()
-        hist_list1 = ['all', 'Sporting Dogs', 'Hound Dogs', 'Working Dogs', 'Companion Dogs', 'Herding Dogs', 'Terrier Dogs']
-        bar_combobox1 = ttk.Combobox(self.middle_frame_explore, textvariable=self.selected1_explore,
-                                     values=hist_list1, state='readonly', style='Custom.TCombobox')
+        hist_list1 = ['all', 'Sporting Dogs', 'Hound Dogs', 'Working Dogs',
+                      'Companion Dogs', 'Herding Dogs', 'Terrier Dogs']
+        bar_combobox1 = ttk.Combobox(self.middle_frame_explore,
+                                     textvariable=self.selected1_explore,
+                                     values=hist_list1, state='readonly',
+                                     style='Custom.TCombobox')
         bar_combobox1.pack(side='left', anchor='ne', padx=30, expand=True)
         bar_combobox1.set('Select Group')
 
         # Attribute 2
-        hist_list2 = ['max_height_male', 'max_height_female', 'max_weight_male', 'max_weight_female',
+        hist_list2 = ['max_height_male', 'max_height_female',
+                      'max_weight_male', 'max_weight_female',
                       'average_lifespan', 'average_size', 'adaptability', 'all_around_friendliness',
                       'health_grooming', 'trainability', 'exercise_needs', 'average_lifespan']
         bar_combobox2 = ttk.Combobox(self.middle_frame_explore, textvariable=self.selected2_explore,
@@ -658,7 +690,8 @@ class PuppyPickerView(tk.Tk):
         """
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
-        explore_bar = self.graph_manage.explore_bar(self.selected1_explore.get(), self.selected2_explore.get())
+        explore_bar = self.graph_manage.explore_bar(self.selected1_explore.get(),
+                                                    self.selected2_explore.get())
         canvas = FigureCanvasTkAgg(explore_bar, master=self.bottom_frame_explore)
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.pack(side='top', anchor='n', pady=20, expand=True)
@@ -721,12 +754,16 @@ class PuppyPickerView(tk.Tk):
 
         sorted_df = self.df.sort_values(by='breed')
         sorted_breed_list = sorted_df['breed'].tolist()
-        self.combobox_breed_cp1 = ttk.Combobox(top_frame_compare, width=20, textvariable=self.selected1_breed_compare,
-                                               values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed_cp1 = ttk.Combobox(top_frame_compare, width=20,
+                                               textvariable=self.selected1_breed_compare,
+                                               values=sorted_breed_list, state='readonly',
+                                               style='Custom.TCombobox')
         self.combobox_breed_cp1.pack(side='left', anchor='ne', padx=10, pady=70, expand=True)
 
-        self.combobox_breed_cp2 = ttk.Combobox(top_frame_compare, width=20, textvariable=self.selected2_breed_compare,
-                                               values=sorted_breed_list, state='readonly', style='Custom.TCombobox')
+        self.combobox_breed_cp2 = ttk.Combobox(top_frame_compare, width=20,
+                                               textvariable=self.selected2_breed_compare,
+                                               values=sorted_breed_list, state='readonly',
+                                               style='Custom.TCombobox')
         self.combobox_breed_cp2.pack(side='left', anchor='nw', padx=10, pady=70, expand=True)
 
         self.compare_button = ttk.Button(top_frame_compare, text='Show Comparison', cursor='heart',
@@ -735,9 +772,11 @@ class PuppyPickerView(tk.Tk):
         self.combobox_breed_cp1.set('Select Dog Breed')
         self.combobox_breed_cp2.set('Select Dog Breed')
 
-        compare_list = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
+        compare_list = ['all_around_friendliness', 'trainability',
+                        'health_grooming', 'exercise_needs', 'adaptability']
         # Default graph
-        char_compare_bar = self.graph_manage.compare_bar('Chihuahua', 'Golden Retriever', compare_list)
+        char_compare_bar = self.graph_manage.compare_bar('Chihuahua',
+                                                         'Golden Retriever', compare_list)
         canvas = FigureCanvasTkAgg(char_compare_bar, master=self.bottom_frame_compare)
         canvas_widget_test = canvas.get_tk_widget()
         canvas_widget_test.pack(side='top', anchor='n', expand=True)
@@ -749,7 +788,8 @@ class PuppyPickerView(tk.Tk):
         """
         for widget in self.bottom_frame_compare.winfo_children():
             widget.destroy()
-        compare_list = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
+        compare_list = ['all_around_friendliness', 'trainability',
+                        'health_grooming', 'exercise_needs', 'adaptability']
         breed1 = self.combobox_breed_cp1.get()
         breed2 = self.combobox_breed_cp2.get()
         char_compare_bar = self.graph_manage.compare_bar(breed1, breed2, compare_list)

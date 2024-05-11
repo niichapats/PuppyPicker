@@ -53,5 +53,6 @@ class PuppyPickerModel:
         if not mode_lifespan.empty:
             mode_lifespan = mode_lifespan.iloc[0]
 
-        list_data = [int(min_lifespan), int(max_lifespan), int(average_lifespan), int(mode_lifespan)]
+        list_data = [int(min_lifespan), int(max_lifespan),
+                     int(average_lifespan), int(mode_lifespan)]
         return list_data

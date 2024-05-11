@@ -21,6 +21,10 @@ class PuppyPickerController:
         self.graph_manage = GraphManage()
 
     def next_button_handler(self, page):
+        """
+        Handles actions triggered by the 'Next' button
+        based on the current page number.
+        """
         if page == 1:
             self.view.find_breeds_page2(self.model.descriptive_lifespan())
         elif page == 2:
@@ -48,12 +52,19 @@ class PuppyPickerController:
                 self.view.report_error('Please Select Dog Breed')
 
     def show_info_handler(self):
+        """
+        Displays detailed information for a selected dog breed.
+        """
         if self.view.selected_breed_combo.get() != 'Select':
             self.view.dog_info_page()
         else:
             self.view.report_error('Please Select Dog Breed')
 
     def gender_combobox_handler(self, event):
+        """
+        Handles gender selection from a combobox,
+        updating the graphical display accordingly.
+        """
         breed = self.view.selected_breed_combo.get()
         self.view.canvas_widget_gender.destroy()
         selected_gender = self.view.selected_gender_combo.get()
@@ -63,6 +74,10 @@ class PuppyPickerController:
             self.view.draw_female_graph(breed)
 
     def ex_show_graph_handler(self):
+        """
+        Handles graph plotting for the data exploration page
+        based on selected attributes.
+        """
         page = self.view.explore_page
         if self.view.selected1_explore.get() != 'Select Attribute (x)' \
                 and self.view.selected2_explore.get() != 'Select Attribute (y)':
@@ -80,6 +95,10 @@ class PuppyPickerController:
             self.view.report_error('Please Select attributes')
 
     def show_compare_handler(self):
+        """
+        Handles the comparison of characteristics between
+        two selected dog breeds using a multiple bar graph.
+        """
         if self.view.selected1_breed_compare.get() != 'Select Dog Breed' \
                 and self.view.selected2_breed_compare.get() != 'Select Dog Breed':
             self.view.draw_compare_graph()
@@ -88,7 +107,6 @@ class PuppyPickerController:
 
     def run(self):
         """
-        Run the program by running CalculatorView
-        :return:
+        Run the program by running PuppyPickerView
         """
         self.view.run()

@@ -8,7 +8,7 @@ from graph_manage import GraphManage
 
 
 class PuppyPickerView(tk.Tk):
-    """ Graphical user interface for the Calculator application. """
+    """ Graphical user interface for Puppy Picker """
 
     def __init__(self, controller):
         """
@@ -41,6 +41,10 @@ class PuppyPickerView(tk.Tk):
         self.init_component()
 
     def init_component(self):
+        """
+        Initialize and set up GUI components.
+        """
+
         # Define color scheme
         light_brown_bg = '#FFFAF0'
         white_bg = '#FFFAFA'
@@ -110,6 +114,10 @@ class PuppyPickerView(tk.Tk):
         return left_frame
 
     def create_right_frame_welcome(self):
+        """
+        The initial right frame welcoming the user and
+        displaying introductory information.
+        """
         right_frame = ttk.Frame(self, padding=5, style='TFrame')
 
         home_info = ttk.Label(right_frame,
@@ -120,7 +128,7 @@ class PuppyPickerView(tk.Tk):
 
     def create_bottom_frame(self):
         """
-        Bottom frame for exit button, next button
+        Bottom frame containing exit button and next button
         """
         bottom_frame = ttk.Frame(self)
         exit_button = ttk.Button(bottom_frame, text="Exit", style='Big.TButton', cursor="heart", command=self.destroy)
@@ -141,7 +149,7 @@ class PuppyPickerView(tk.Tk):
 
     def clear_right_frame(self):
         """
-        Clear right frame for changing page
+        Clears all widgets in the right frame to prepare for new content.
         """
         for widget in self.right_frame.winfo_children():
             widget.destroy()
@@ -156,6 +164,9 @@ class PuppyPickerView(tk.Tk):
 
     # Find Matching Breeds
     def find_breeds_page1(self):
+        """
+        Displays the first page for the "Find Matching Breeds" menu
+        """
         self.page_find_breeds = 1
         self.menu_label.destroy()
         try:
@@ -179,10 +190,14 @@ class PuppyPickerView(tk.Tk):
         self.next_button.pack(side=tk.RIGHT, padx=35, pady=25)
 
     def find_breeds_page2(self, data):
+        """
+        Displays the second page of the "Find Matching Breeds" menu
+        which includes the storytelling
+        """
         self.page_find_breeds = 2
         self.clear_right_frame()
 
-        # Top sub frame for label 1 and graph 1
+        # Top sub frame for label 1 ,graph 1 and graph 2
         self.top_sub_frame = tk.Frame(self.right_frame, background='white')
         self.top_sub_frame.pack(side="top", fill="both", expand=True)
 
@@ -198,21 +213,21 @@ class PuppyPickerView(tk.Tk):
                                      style='Small.TLabel')
         descriptive_stat.pack(side="right", fill="both", expand=True, padx=15)
 
-        # Top right sub frame for combo box and graph 2
-        self.story_top_right_frame = tk.Frame(self.top_sub_frame, background='white')
-        self.story_top_right_frame.pack(side="left", fill="both", expand=True)
+        # Top left sub frame for combo box and graph 2
+        self.story_top_left_frame = tk.Frame(self.top_sub_frame, background='white')
+        self.story_top_left_frame.pack(side="left", fill="both", expand=True)
 
         # Combo box for selecting histogram
         story_hist_list = ['max_life_expectancy', 'max_height_male', 'max_height_female', 'max_weight_male',
                            'max_weight_female']
-        story_combobox = ttk.Combobox(self.story_top_right_frame, textvariable=self.selected_story_combo,
+        story_combobox = ttk.Combobox(self.story_top_left_frame, textvariable=self.selected_story_combo,
                                       values=story_hist_list, state="readonly", style='Custom.TCombobox')
         story_combobox.pack(side="top", fill="x", expand=False, padx=(20, 40), pady=(5, 0))
         story_combobox.bind('<<ComboboxSelected>>', self.story_combobox_handler)
 
         # Graph 1: default histogram
         self.story_hist = self.graph_manage.create_histogram('max_life_expectancy', 'small')
-        canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_right_frame)
+        canvas = FigureCanvasTkAgg(self.story_hist, master=self.story_top_left_frame)
         canvas.draw()
         self.canvas_widget_story = canvas.get_tk_widget()
         self.canvas_widget_story.config(width=240, height=210)
@@ -255,7 +270,9 @@ class PuppyPickerView(tk.Tk):
         summary.pack(side="top", fill="both", expand=True)
 
     def story_combobox_handler(self, event):
-        """ Handle combobox selection. """
+        """
+        Handle combobox selection in second page of "Find Matching Breeds" menu.
+        """
         selected_var = self.selected_story_combo.get()
         if selected_var != self.default_story_combo:
             self.update_hist(selected_var)
@@ -263,7 +280,7 @@ class PuppyPickerView(tk.Tk):
     def update_hist(self, selected_var):
         """
         Update the histogram in the storytelling section
-        by retrieving data from a combo box
+        by retrieving data from a combobox.
         """
         self.canvas_widget_story.destroy()
         self.story_hist = self.graph_manage.create_histogram(selected_var, 'small')
@@ -274,6 +291,12 @@ class PuppyPickerView(tk.Tk):
         self.canvas_widget_story.pack(fill=tk.BOTH, expand=True, padx=(20, 70))
 
     def find_breeds_page3(self):
+        """
+        Displays the third page of the "Find Matching Breeds" menu.
+
+        This page allows users to input their preferences for
+        dog characteristics to assist in finding matching dog breeds.
+        """
         self.clear_right_frame()
         self.page_find_breeds = 3
         top_label = ttk.Label(self.right_frame, style='TLabel',
@@ -329,6 +352,14 @@ class PuppyPickerView(tk.Tk):
         size_combobox.set('Select')
 
     def find_breeds_page4(self, name_list, score_list):
+        """
+        Displays the fourth page of the "Find Matching Breeds" menu.
+
+        This page presents a list of matching dog breeds based on
+        user preferences, scored and sorted by relevance.
+        It allows users to select from these breeds to
+        view more detailed information about each one.
+        """
         self.clear_right_frame()
         self.page_find_breeds = 4
 
@@ -356,6 +387,10 @@ class PuppyPickerView(tk.Tk):
         self.combobox_breed1.set('Select')
 
     def get_user_prefer(self):
+        """
+        Collects and returns the user's preferences from input fields.
+        Gathers inputs for dog traits and size from the GUI and returns them as a list.
+        """
         prefer_list = [self.entry_adapt.get(), self.entry_friendly.get(), self.entry_health.get(),
                        self.entry_train.get(), self.entry_exercise.get(), self.entry_life.get(),
                        self.selected_size.get()]
@@ -364,10 +399,13 @@ class PuppyPickerView(tk.Tk):
     # Statistical Information
     def statistical_page(self):
         """
-        First page of Statistical Information menu
+        Displays the third page of the "Statistical Information" menu.
+
+        This page allows users to select dog breeds and explore their statistics.
+        It includes buttons for choosing breeds to show detailed information
+        and options for further data exploration.
         """
 
-        # Clear some elements
         self.menu_label.destroy()
         try:
             self.next_button.destroy()
@@ -382,7 +420,6 @@ class PuppyPickerView(tk.Tk):
                                     style='TLabel', padding=(55, 0))
         self.menu_label.pack()
 
-        # Configure grid for expansion and alignment
         self.right_frame.grid_columnconfigure(0, weight=1)
         self.right_frame.grid_rowconfigure(0, minsize=50)
         self.right_frame.grid_rowconfigure(1, minsize=50)
@@ -416,6 +453,12 @@ class PuppyPickerView(tk.Tk):
         self.explore_button.grid(row=4, column=0, padx=170, pady=0, sticky='new')
 
     def dog_info_page(self):
+        """
+        Displays detailed information about a selected dog breed on the breed information page.
+
+        This page allows users to view characteristics such as breed group, size, lifespan,
+        and to select a gender for additional specific details.
+        """
         self.clear_right_frame()
         try:
             self.next_button.destroy()
@@ -460,6 +503,10 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_male_graph(self, breed):
+        """
+        Draws a graph displaying the height and weight statistics
+        for male dogs of a selected breed.
+        """
         gender_bar = self.graph_manage.male_bar(breed)
         canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
         self.canvas_widget_gender = canvas.get_tk_widget()
@@ -467,6 +514,10 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_female_graph(self, breed):
+        """
+        Draws a graph displaying the height and weight statistics
+        for female dogs of a selected breed.
+        """
         gender_bar = self.graph_manage.female_bar(breed)
         canvas = FigureCanvasTkAgg(gender_bar, master=self.info_left_frame)
         self.canvas_widget_gender = canvas.get_tk_widget()
@@ -475,6 +526,11 @@ class PuppyPickerView(tk.Tk):
 
     # Data Exploration
     def data_exploration_page(self):
+        """
+        Displays the data exploration page.
+
+        On this page, users can choose from various attributes to plot custom graphs
+        """
         self.clear_right_frame()
         top_frame_explore = ttk.Frame(self.right_frame, style='TFrame')
         self.middle_frame_explore = ttk.Frame(self.right_frame, style='TFrame')
@@ -503,6 +559,9 @@ class PuppyPickerView(tk.Tk):
         self.explore_bar_page()
 
     def explore_bar_page(self):
+        """
+        The interface for plotting bar graphs on the data exploration page.
+        """
         self.explore_page = 'bar'
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
@@ -531,6 +590,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def explore_scatter_page(self):
+        """
+        The interface for plotting scatter plot on the data exploration page.
+        """
         self.explore_page = 'scatter'
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
@@ -560,6 +622,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def explore_hist_page(self):
+        """
+        The interface for plotting histogram on the data exploration page.
+        """
         self.explore_page = 'histogram'
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
@@ -588,6 +653,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_explore_bar(self):
+        """
+        Draws a bar graph based on selected attributes for the data exploration page.
+        """
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
         explore_bar = self.graph_manage.explore_bar(self.selected1_explore.get(), self.selected2_explore.get())
@@ -597,6 +665,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_explore_scatter(self):
+        """
+        Draws a scatter plot based on selected attributes for the data exploration page.
+        """
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
         explore_scatter = self.graph_manage.explore_scatter(self.selected1_explore.get(),
@@ -607,6 +678,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_explore_hist(self):
+        """
+        Draws a histogram based on selected attributes for the data exploration page.
+        """
         for widget in self.bottom_frame_explore.winfo_children():
             widget.destroy()
         selected_group = self.selected1_explore.get()
@@ -626,6 +700,10 @@ class PuppyPickerView(tk.Tk):
 
     # Characteristic Comparison
     def comparison_page(self):
+        """
+        Displays a page for comparing the characteristics of two selected
+        dog breeds using a multiple bar graph.
+        """
         self.menu_label.destroy()
         try:
             self.next_button.destroy()
@@ -666,6 +744,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def draw_compare_graph(self):
+        """
+        Draws a multiple bar graph comparing the characteristics of two selected dog breeds.
+        """
         for widget in self.bottom_frame_compare.winfo_children():
             widget.destroy()
         compare_list = ['all_around_friendliness', 'trainability', 'health_grooming', 'exercise_needs', 'adaptability']
@@ -678,6 +759,9 @@ class PuppyPickerView(tk.Tk):
         canvas.draw()
 
     def report_error(self, inform_text):
+        """
+        Displays an error message in red text at the bottom right of the screen.
+        """
         try:
             self.error.destroy()
         except AttributeError:
@@ -690,7 +774,6 @@ class PuppyPickerView(tk.Tk):
 
     def run(self):
         """
-        Run the program (CalculatorView)
-        :return:
+        Starts the tkinter main event loop to run the application.
         """
         self.mainloop()

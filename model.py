@@ -3,10 +3,24 @@ from graph_manage import GraphManage
 
 
 class PuppyPickerModel:
+    """
+    Model class for the Puppy Picker.
+
+    This class provides functions to find matching breeds
+    based on user preferences and to compute descriptive
+    statistics about breed lifespans.
+    """
     def __init__(self):
+        """
+        Initializes the PuppyPickerModel instance by loading breed data into
+        a DataFrame from a CSV file.
+        """
         self.df = GraphManage.load_data('breeds.csv')
 
     def find_matching_breeds(self, preference: list):
+        """
+        Finds and returns the top 5 matching puppy breeds based on user preferences.
+        """
         columns = ['adaptability', 'all_around_friendliness', 'health_grooming',
                    'trainability', 'exercise_needs', 'average_lifespan']
         if preference[6] == 'all':
@@ -14,6 +28,7 @@ class PuppyPickerModel:
         else:
             df_temp = self.df[self.df['size_category'] == preference[6]].copy()
 
+        # Calculate the scores for each breed based on the user's preferences.
         for index in range(6):
             df_temp['score_' + columns[index]] = df_temp[columns[index]] * int(preference[index])
 
@@ -27,6 +42,9 @@ class PuppyPickerModel:
         return top_name, top_score
 
     def descriptive_lifespan(self):
+        """
+        Computes and returns basic descriptive statistics for the lifespans of breeds.
+        """
         min_lifespan = self.df['average_lifespan'].min()
         max_lifespan = self.df['average_lifespan'].max()
         average_lifespan = self.df['average_lifespan'].mean()
